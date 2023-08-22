@@ -1,0 +1,54 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@if (Convert.ToInt64(Session["view_userId"]) > 0)
+{
+    <div class="header-cover">
+        <div id="cover" ng-show="session.view_photoProfile && session.view_photoCover">
+            <div class="cover__profile_bg">
+                <img ng-src="{{session.view_photoCover}}@(CommonHelper.getImageWidth(Rules.imageSize.Cover))" />
+            </div>
+            <div class="cover__profile_top">
+                <img ng-src="{{session.view_photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))" alt="{{session.view_userName}}" title="{{session.view_userName}}">
+                <div class="cover__text">
+                    <span>{{session.view_userName}}</span>
+                </div>
+            </div>
+            <div class="cover__image" style="background-image: url('{{session.view_photoCover}}@(CommonHelper.getImageWidth(Rules.imageSize.Cover))')" ng-if="session.view_photoCover">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored btn__follow" 
+                        ng-if="isLogin && session.userId!=session.view_userId" ng-click="followEntity()">
+                    <span ng-show="session.view_isFollow==1"><i class="material-icons">done</i>Siguiendo</span>
+                    <span ng-show="session.view_isFollow==0"><i class="material-icons">record_voice_over</i>Seguir</span>
+                </button>
+            </div>
+        </div>
+        <div class="mdl-navbar mdl-layout__header-row">
+            <nav class="mdl-navigation">
+                @if (Convert.ToInt32(Session["view_typeEntity"]) == 1)
+                {
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Profile ? "is-selected" : "")" href="/@Session["view_userCode"]/Profile" ng-show="isLogin">@Site.navProfile</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Wall ? "is-selected" : "")" href="/@Session["view_userCode"]">@Site.navPosts</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Photo ? "is-selected" : "")" href="/@Session["view_userCode"]/Photo">@Site.navPhotos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Video ? "is-selected" : "")" href="/@Session["view_userCode"]/Video">@Site.navVideos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Friend ? "is-selected" : "")" href="/@Session["view_userCode"]/Friend">@Site.navFriends<span class="mdl-badge" data-badge="!" ng-show="isLogin && badges.friend>0"></span></a>
+                }
+                else if (Convert.ToInt32(Session["view_typeEntity"]) == 2)
+                {
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Profile ? "is-selected" : "")" href="/@Session["view_userCode"]/Profile" ng-show="isLogin">@Site.navProfile</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Wall ? "is-selected" : "")" href="/@Session["view_userCode"]">@Site.navPosts</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Photo ? "is-selected" : "")" href="/@Session["view_userCode"]/Photo">@Site.navPhotos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Video ? "is-selected" : "")" href="/@Session["view_userCode"]/Video">@Site.navVideos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Follower ? "is-selected" : "")" href="/@Session["view_userCode"]/Friend/IndexCompany">@Site.navFollowers<span class="mdl-badge" data-badge="!" ng-show="isLogin && badges.friend>0"></span></a>
+                }
+                else if (Convert.ToInt32(Session["view_typeEntity"]) == 3)
+                {
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Profile ? "is-selected" : "")" href="/@Session["view_userCode"]/Profile/IndexGroup" ng-show="isLogin">@Site.navProfile</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Wall ? "is-selected" : "")" href="/@Session["view_userCode"]">@Site.navPosts</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Photo ? "is-selected" : "")" href="/@Session["view_userCode"]/Photo">@Site.navPhotos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Video ? "is-selected" : "")" href="/@Session["view_userCode"]/Video">@Site.navVideos</a>
+                    <a class="mdl-navigation__link @(ViewBag.PageUser == Rules.pageUser.Member ? "is-selected" : "")" href="/@Session["view_userCode"]/Friend/IndexGroup">@Site.navMembers<span class="mdl-badge" data-badge="!" ng-show="badges.member>0"></span></a>
+                }
+            </nav>
+        </div>
+    </div>
+}

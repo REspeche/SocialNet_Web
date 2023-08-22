@@ -1,0 +1,181 @@
+﻿@using Web.App_Start;
+@using Web_Resource;
+@Scripts.RenderFormat(BundleFormat.jsDefer, "~/js/shared/_login")
+<div id="loginDiv" ng-controller="loginCtrl" ng-init="loadLogin()" data-login="@(((bool)Session["isLogin"])? "1" : "0")">
+    <button id="btnLogin" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" 
+            ng-show="bntLogin && !isLogin" style="@if ((bool)Session["isLogin"]) { @Html.Raw("display:none;") }">
+        @Site.titLogin1
+    </button>
+    <dialog id="dialogLogin" class="mdl-dialog dialogFull">
+        <div class="mdl-content">
+            <form name="frmLogin" ng-submit="submitLogin()" novalidate ng-show="formVisible=='login'">
+                <h4 class="mdl-dialog__title">@Site.titLogin1</h4>
+                <div class="mdl-dialog__content">
+                    <p>@Site.txtLogin1</p>
+                    <fieldset>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="email" id="txtEmail" name="txtEmail"
+                                   ng-model="dataL.email" ng-minlength="6" maxlength="100" data-required="true"
+                                   untouch="frmLogin.txtEmail" keyEnter="submitLoginKeyPress()">
+                            <label class="mdl-textfield__label" for="txtEmail">@Site.lblInputEmail</label>
+                            <span class="mdl-textfield__error" ng-show="frmLogin.txtEmail.$touched && frmLogin.txtEmail.$error.required">@Message.errorFieldRequired</span>
+                            <span class="mdl-textfield__error" ng-show="frmLogin.txtEmail.$touched && frmLogin.txtEmail.$error.minlength">@String.Format(Message.errorNminlength, 6)</span>
+                            <span class="mdl-textfield__error" ng-show="frmLogin.txtEmail.$touched && frmLogin.txtEmail.$error.email && !frmLogin.txtEmail.$error.minlength">@Message.errorIncorrectFormat</span>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input type="password" name="fake_password" style="display:none" aria-hidden="true">
+                            <input class="mdl-textfield__input" type="password" id="txtPassword" name="txtPassword"
+                                   ng-model="dataL.password" ng-minlength="8" maxlength="20" data-required="true"
+                                   untouch="frmLogin.txtPassword" keyEnter="submitLoginKeyPress()">
+                            <label class="mdl-textfield__label" for="txtPassword">@Site.lblInputPassword</label>
+                            <span class="mdl-textfield__error" ng-show="frmLogin.txtPassword.$touched && frmLogin.txtPassword.$error.required">@Message.errorFieldRequired</span>
+                            <span class="mdl-textfield__error" ng-show="frmLogin.txtPassword.$touched && frmLogin.txtPassword.$error.minlength">@String.Format(Message.errorNminlength, 8)</span>
+                        </div>
+                    </fieldset>
+                    <p>
+                        <a href="javascript:void(0)" class="register" ng-click="showForm('register')">@Site.lnkSignup</a><br />
+                        <a href="javascript:void(0)" class="password" ng-click="showForm('wantreset')">@Site.lnkRecoverPass</a>
+                    </p>
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" autofocus>
+                        @Site.btnContinue
+                    </button>
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--facebook"
+                            onclick="checkLoginState();">
+                        Facebook
+                    </button>
+                    <button type="button" class="mdl-button mdl-js-button" ng-click="closeDialog()">
+                        @Site.btnCancel
+                    </button>
+                </div>
+            </form>
+            <div ng-show="formVisible=='register'">
+                <h4 class="mdl-dialog__title">@Site.titLogin2 como...</h4>
+                <div class="mdl-tabs mdl-js-tabs">
+                    <div class="mdl-tabs__tab-bar">
+                        <a href="#tab1-panel" class="mdl-tabs__tab {{(tab==1)?'is-active':''}}" ng-click="clickTab(1)">@Site.tabLogin1</a>
+                        <a href="#tab2-panel" class="mdl-tabs__tab {{(tab==2)?'is-active':''}}" ng-click="clickTab(2)">@Site.tabLogin2</a>
+                    </div>
+                    <div class="mdl-tabs__panel {{(tab==1)?'is-active':''}}" id="tab1-panel">
+                        <form name="frmRegisterPerson" ng-submit="submitRegister()" novalidate autocomplete="off">
+                            <div class="mdl-dialog__content">
+                                <p>@Site.txtLogin2</p>
+                                <div class="mdl-grid">
+                                    <div class="mdl-cell mdl-cell--6-col">
+                                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                            <input class="mdl-textfield__input" type="text" id="txtFirstName" name="txtFirstName" ng-model="dataR_person.firstname" ng-minlength="2" maxlength="50" data-required="true" untouch="frmRegisterPerson.txtFirstName">
+                                            <label class="mdl-textfield__label" for="txtFirstName">@Site.lblInputFirstName</label>
+                                            <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtFirstName.$touched && frmRegisterPerson.txtFirstName.$error.required">@Message.errorFieldRequired</span>
+                                            <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtFirstName.$touched && frmRegisterPerson.txtFirstName.$error.minlength">@String.Format(Message.errorNminlength, 2)</span>
+                                        </div>
+                                    </div>
+                                    <div class="mdl-cell mdl-cell--6-col">
+                                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                            <input class="mdl-textfield__input" type="text" id="txtLastName" name="txtLastName" ng-model="dataR_person.lastname" ng-minlength="2" maxlength="50" data-required="true" untouch="frmRegisterPerson.txtLastName">
+                                            <label class="mdl-textfield__label" for="txtLastName">@Site.lblInputLastName</label>
+                                            <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtLastName.$touched && frmRegisterPerson.txtLastName.$error.required">@Message.errorFieldRequired</span>
+                                            <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtLastName.$touched && frmRegisterPerson.txtLastName.$error.minlength">@String.Format(Message.errorNminlength, 2)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="email" id="txtEmailR" name="txtEmailR" ng-model="dataR_person.email" ng-minlength="6" maxlength="100"
+                                           data-required="true" untouch="frmRegisterPerson.txtEmailR">
+                                    <label class="mdl-textfield__label" for="txtEmail">@Site.lblInputEmail</label>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtEmailR.$touched && frmRegisterPerson.txtEmailR.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtEmailR.$touched && frmRegisterPerson.txtEmailR.$error.minlength">@String.Format(Message.errorNminlength, 6)</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterPerson.$touched && frmRegisterPerson.txtEmailR.$error.email && !frmRegisterPerson.txtEmailR.$error.minlength">@Message.errorIncorrectFormat</span>
+                                </div>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input type="password" name="fake_password" style="display:none" aria-hidden="true">
+                                    <input class="mdl-textfield__input" type="password" id="txtPasswordR" name="txtPasswordR" ng-model="dataR_person.password" ng-minlength="8" maxlength="20"
+                                           data-required="true" untouch="frmRegisterPerson.txtPasswordR">
+                                    <label class="mdl-textfield__label" for="txtPassword">@Site.lblInputPassword</label>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtPasswordR.$touched && frmRegisterPerson.txtPasswordR.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterPerson.txtPasswordR.$touched && frmRegisterPerson.txtPasswordR.$error.minlength">@String.Format(Message.errorNminlength, 8)</span>
+                                </div>
+                            </div>
+                            <div class="mdl-dialog__actions">
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                                    @Site.btnContinue
+                                </button>
+                                <button type="button" class="mdl-button mdl-js-button"
+                                        ng-click="showForm('login')">
+                                    @Site.btnBack
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mdl-tabs__panel {{(tab==2)?'is-active':''}}" id="tab2-panel">
+                        <form name="frmRegisterCompany" ng-submit="submitRegister()" novalidate autocomplete="off">
+                            <div class="mdl-dialog__content">
+                                <p>@Site.txtLogin4</p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="txtCompanyName" name="txtCompanyName" ng-model="dataR_company.companyname" ng-minlength="2" maxlength="50" data-required="true" untouch="frmRegisterCompany.txtCompanyName">
+                                    <label class="mdl-textfield__label" for="txtCompanyName">Nombre de la Empresa</label>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtCompanyName.$touched && frmRegisterCompany.txtCompanyName.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtCompanyName.$touched && frmRegisterCompany.txtCompanyName.$error.minlength">@String.Format(Message.errorNminlength, 2)</span>
+                                </div>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="email" id="txtEmailR2" name="txtEmailR2" ng-model="dataR_company.email" ng-minlength="6" maxlength="100"
+                                           data-required="true" untouch="frmRegisterCompany.txtEmailR2">
+                                    <label class="mdl-textfield__label" for="txtEmail">@Site.lblInputEmail</label>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtEmailR2.$touched && frmRegisterCompany.txtEmailR2.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtEmailR2.$touched && frmRegisterCompany.txtEmailR2.$error.minlength">@String.Format(Message.errorNminlength, 6)</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.$touched && frmRegisterCompany.txtEmailR2.$error.email && !frmRegisterCompany.txtEmailR2.$error.minlength">@Message.errorIncorrectFormat</span>
+                                </div>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input type="password" name="fake_password" style="display:none" aria-hidden="true">
+                                    <input class="mdl-textfield__input" type="password" id="txtPasswordR2" name="txtPasswordR2" ng-model="dataR_company.password" ng-minlength="8" maxlength="20"
+                                           data-required="true" untouch="frmRegisterCompany.txtPasswordR2">
+                                    <label class="mdl-textfield__label" for="txtPassword">@Site.lblInputPassword</label>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtPasswordR2.$touched && frmRegisterCompany.txtPasswordR2.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmRegisterCompany.txtPasswordR2.$touched && frmRegisterCompany.txtPasswordR2.$error.minlength">@String.Format(Message.errorNminlength, 8)</span>
+                                </div>
+                            </div>
+                            <div class="mdl-dialog__actions">
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                                    @Site.btnContinue
+                                </button>
+                                <button type="button" class="mdl-button mdl-js-button"
+                                        ng-click="showForm('login')">
+                                    @Site.btnBack
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <form name="frmPassword" ng-submit="submitSendResetMail()" novalidate ng-show="formVisible=='wantreset' || formVisible=='wantresetagain'" autocomplete="off">
+                <h4 class="mdl-dialog__title">@Site.titLogin3</h4>
+                <div class="mdl-dialog__content">
+                    <p>@Site.txtLogin3</p>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="email" id="txtEmailP" name="txtEmailP" ng-model="dataP.email" ng-minlength="6" maxlength="100" data-required="true" untouch="frmPassword.txtEmailP">
+                        <label class="mdl-textfield__label" for="txtEmail">@Site.lblInputEmail</label>
+                        <span class="mdl-textfield__error" ng-show="frmPassword.txtEmailP.$touched && frmPassword.txtEmailP.$error.required">@Message.errorFieldRequired</span>
+                        <span class="mdl-textfield__error" ng-show="frmPassword.txtEmailP.$touched && frmPassword.txtEmailP.$error.minlength">@String.Format(Message.errorNminlength, 6)</span>
+                        <span class="mdl-textfield__error" ng-show="frmPassword.$touched && frmPassword.txtEmailP.$error.email && !frmPassword.txtEmailP.$error.minlength">@Message.errorIncorrectFormat</span>
+                    </div>
+                </div>
+                <div class="mdl-dialog__actions">
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                        @Site.btnContinue
+                    </button>
+                    <button type="button" class="mdl-button mdl-js-button" ng-click="closeDialog()"
+                            ng-show="showCancel">
+                        @Site.btnCancel
+                    </button>
+                    <button type="button" class="mdl-button mdl-js-button"
+                            ng-click="showForm('login')" ng-show="!showCancel">
+                        @Site.btnBack
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+    </dialog>
+</div>

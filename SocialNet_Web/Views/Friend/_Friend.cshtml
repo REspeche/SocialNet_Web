@@ -1,0 +1,70 @@
+﻿@using Web_Resource;
+<div class="card__menu" ng-show="(isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId) && item.userId!=session.userId && tab==1 && session.typeEntity!=2)">
+    <button id="card-menu-actions-{{item.friendId}}_1" class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">keyboard_arrow_down</i>
+    </button>
+
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+        for="card-menu-actions-{{item.friendId}}_1">
+        <li class="mdl-menu__item" ng-click="blockFriend($index)">{{item.blocked == 0 ? "@Site.mnuBlock" : "@Site.mnuUnBlock"}}</li>
+        <li class="mdl-menu__item" ng-click="followFriend($index)" ng-disabled="item.blocked==1">{{item.following == 1 ? "@Site.mnuUnFollowFriend" : "@Site.mnuFollowFriend"}}</li>
+        <li class="mdl-menu__item" ng-click="removeFriend($index)">@Site.mnuRemoveFriend</li>
+    </ul>
+</div>
+<div class="card__menu" ng-show="(isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId) && tab==3)">
+    <button id="card-menu-actions-{{item.friendId}}_2" class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">keyboard_arrow_down</i>
+    </button>
+
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+        for="card-menu-actions-{{item.friendId}}_2">
+        <li class="mdl-menu__item" ng-click="acceptFriend($index)">@Site.mnuAcceptFriend</li>
+        <li class="mdl-menu__item" ng-click="rejectFriend($index)">@Site.mnuRejectFriend</li>
+    </ul>
+</div>
+<div class="card__menu" ng-show="(isLogin && session.userId==session.view_userId && tab==2)">
+    <button id="card-menu-actions-{{item.friendId}}_3" class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">keyboard_arrow_down</i>
+    </button>
+
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+        for="card-menu-actions-{{item.friendId}}_3">
+        <li class="mdl-menu__item" ng-click="cancelRequest($index)">@Site.mnuCancelRequest</li>
+    </ul>
+</div>
+<div class="mdl-card__title mdl-card--expand" ng-class="item.blocked == 1 ? 'friend-block' : ''"></div>
+<div class="mdl-card__actions">
+    <a href="{{(item.userProfileCode=='' || item.following==0 || session.typeEntity!=1 || session.view_typeEntity==2)?'#':'/'+item.userProfileCode}}">{{item.userName}}</a>
+    <div class="card__action" ng-if="isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId) && tab==1">
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="followFriend($index)"
+                ng-if="session.typeEntity!=2"
+                ng-show="item.blocked == 0" ng-attr-title="{{item.following == 1 ? '@Site.mnuUnFollowFriend' : '@Site.mnuFollowFriend'}}">
+            <i class="material-icons">{{item.following == 1 ? "visibility" : "visibility_off"}}</i>
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="blockFriend($index)"
+                ng-if="session.typeEntity!=2"
+                ng-show="item.blocked == 1" ng-attr-title="{{item.blocked == 0 ? '@Site.mnuBlock' : '@Site.mnuUnBlock'}}">
+            <i class="material-icons">block</i>
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="removeFriend($index)"
+                ng-if="session.typeEntity==2" title="@Site.mnuRemoveFollower">
+            <i class="material-icons">delete</i>
+        </button>
+    </div>
+    <div class="card__action" ng-if="isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId) && tab==3">
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="rejectFriend($index)"
+                title="@Site.mnuRejectFriend">
+            <i class="material-icons">thumb_down</i>
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="acceptFriend($index)"
+                title="@Site.mnuAcceptFriend">
+            <i class="material-icons">thumb_up</i>
+        </button>
+    </div>
+    <div class="card__action" ng-if="isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId) && tab==2">
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="cancelRequest($index)"
+                title="@Site.mnuCancelRequest">
+            <i class="material-icons">pan_tool</i>
+        </button>
+    </div>
+</div>

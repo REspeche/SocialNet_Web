@@ -1,0 +1,1959 @@
+USE [master]
+GO
+CREATE DATABASE [SocialNet]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'SocialNet', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQL2016\MSSQL\DATA\SocialNet.mdf' , SIZE = 4096KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+ LOG ON 
+( NAME = N'SocialNet_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.SQL2016\MSSQL\DATA\SocialNet_log.ldf' , SIZE = 1536KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [SocialNet] SET COMPATIBILITY_LEVEL = 120
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [SocialNet].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [SocialNet] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [SocialNet] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [SocialNet] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [SocialNet] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [SocialNet] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [SocialNet] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [SocialNet] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [SocialNet] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [SocialNet] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [SocialNet] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [SocialNet] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [SocialNet] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [SocialNet] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [SocialNet] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [SocialNet] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [SocialNet] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [SocialNet] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [SocialNet] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [SocialNet] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [SocialNet] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [SocialNet] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [SocialNet] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [SocialNet] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [SocialNet] SET  MULTI_USER 
+GO
+ALTER DATABASE [SocialNet] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [SocialNet] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [SocialNet] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [SocialNet] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+GO
+ALTER DATABASE [SocialNet] SET DELAYED_DURABILITY = DISABLED 
+GO
+USE [SocialNet]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.04.19
+-- Description:	Trae los 2 primeros comentarios del usuario si es que posteo
+-- =============================================
+CREATE FUNCTION [dbo].[getCommentFromPost] 
+(
+@evnId as bigint,
+@entIdSession as bigint
+)
+RETURNS VARCHAR(4000)
+AS
+BEGIN
+	DECLARE @retValue AS VARCHAR(4000) = null
+
+	IF (SELECT COUNT(*) FROM evn_event WHERE evn_idTarget=@evnId and ent_idDo=@entIdSession and evn_typeEvent=2 and evn_enabled=1) > 0
+	BEGIN
+		SET @retValue = 
+			(
+				SELECT *
+				FROM
+				(
+					SELECT TOP 2
+						--Post
+						evn.evn_id as postId,
+						evn.evn_comment as postText,
+						dbo.toTimeStamp(evn.evn_timestampCreated) as postCreated,
+						evn.evn_visibility as visibility,
+						-- Blob post
+						upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+						-- User
+						entO.ent_id as userId,
+						entO.ent_firstName+' '+entO.ent_lastName as userName,
+						entO.ent_profileCode as userProfileCode,
+						(select count(*) from lik_like where evn_id = evn.evn_id and lik_enabled=1) as countLikes,
+						convert(bit,case when lik.lik_id is null then 0 else 1 end) as isLike
+					FROM evn_event evn
+					INNER JOIN	ent_entity entO ON evn.ent_idDo = entO.ent_id
+					LEFT JOIN	(
+								SELECT blo_id,blo_guid,blo_extension, evn_id
+								FROM blo_blob _blo
+								INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+								) as bloP ON entO.evn_idProfile = bloP.evn_id
+					LEFT JOIN lik_like lik ON evn.evn_id = lik.evn_id and lik.ent_id = @entIdSession and lik.lik_enabled=1
+					WHERE evn.evn_enabled = 1
+					AND entO.ent_enabled=1
+					AND evn.evn_typeEvent=2
+					AND evn_idTarget=@evnId
+					ORDER BY evn.evn_id DESC
+				) lis
+				ORDER BY lis.postId ASC
+				FOR JSON PATH, ROOT('comments')
+			)
+	END
+
+	RETURN @retValue
+END
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.06.13
+-- Description:	Trae las 4 primeras fotos de una galeria
+-- =============================================
+CREATE FUNCTION [dbo].[getPhotosFromGallery] 
+(
+@evnId as bigint,
+@entIdSession as bigint
+)
+RETURNS VARCHAR(4000)
+AS
+BEGIN
+	DECLARE @retValue AS VARCHAR(4000) = null
+
+	IF (SELECT COUNT(*) FROM evn_event WHERE evn_idTarget=@evnId and ent_idDo=@entIdSession and evn_typeEvent=5 and evn_enabled=1) > 0
+	BEGIN
+		SET @retValue = 
+			(SELECT TOP 4
+				-- Blob post
+				upper(convert(nvarchar(36), blo.blo_guid))+'.'+blo.blo_extension as postGuid
+			FROM evn_event evn
+			LEFT JOIN	(
+						SELECT blo_id,blo_guid,blo_extension, evn_id
+						FROM blo_blob _blo
+						INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+						) as blo ON evn.blo_idMaterial = blo.blo_id
+			WHERE evn.evn_enabled = 1
+			AND evn.evn_typeEvent=5
+			AND evn_idTarget=@evnId
+			ORDER BY evn.evn_id DESC
+			FOR JSON PATH, ROOT('photos'))
+	END
+
+	RETURN @retValue
+END
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.04.11
+-- Description:	Convierte datetime a timestamp
+-- =============================================
+CREATE FUNCTION [dbo].[toTimeStamp] 
+(
+@Param1 as datetime
+)
+RETURNS int
+AS
+BEGIN
+	-- Return the result of the function
+	RETURN DATEDIFF(SECOND,{d '1970-01-01'}, @Param1)
+
+END
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ale_alert](
+	[ale_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ent_id] [bigint] NULL,
+	[ale_send] [bit] NULL CONSTRAINT [DF_ale_alert_ale_send]  DEFAULT ((0)),
+	[ale_timestampSent] [datetime] NULL,
+	[ale_idTarget] [bigint] NULL,
+	[ale_typeTarget] [int] NULL CONSTRAINT [DF_ale_alert_ale_typeTarget]  DEFAULT ((2)),
+	[ale_view] [bit] NULL CONSTRAINT [DF_ale_alert_ale_view]  DEFAULT ((0)),
+	[ale_timestampViewed] [datetime] NULL,
+	[ale_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_ale_alert_ale_timestampCreated]  DEFAULT (getutcdate()),
+	[ale_enabled] [bit] NOT NULL CONSTRAINT [DF_ale_alert_ale_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_ale_alert] PRIMARY KEY CLUSTERED 
+(
+	[ale_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[blo_blob](
+	[blo_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[blo_guid] [uniqueidentifier] NULL CONSTRAINT [DF_blo_blob_blo_guid]  DEFAULT ('00000000-0000-0000-0000-000000000000'),
+	[blo_container] [int] NULL,
+	[blo_extension] [nvarchar](4) NULL,
+	[blo_width] [int] NULL,
+	[blo_height] [int] NULL,
+	[blo_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_blo_blob_blo_timestampCreated]  DEFAULT (getutcdate()),
+ CONSTRAINT [PK_blo_blob] PRIMARY KEY CLUSTERED 
+(
+	[blo_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[cou_country](
+	[cou_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[cou_countryCode] [char](2) NULL CONSTRAINT [DF__cou_count__cou_c__078C1F06]  DEFAULT (''),
+	[cou_countryName] [varchar](45) NULL CONSTRAINT [DF__cou_count__cou_c__0880433F]  DEFAULT (''),
+	[cou_currencyCode] [char](3) NULL CONSTRAINT [DF__cou_count__cou_c__09746778]  DEFAULT (NULL),
+	[cou_fipsCode] [char](2) NULL CONSTRAINT [DF__cou_count__cou_f__0A688BB1]  DEFAULT (NULL),
+	[cou_isoNumeric] [char](4) NULL CONSTRAINT [DF__cou_count__cou_i__0B5CAFEA]  DEFAULT (NULL),
+	[cou_north] [varchar](30) NULL CONSTRAINT [DF__cou_count__cou_n__0C50D423]  DEFAULT (NULL),
+	[cou_south] [varchar](30) NULL CONSTRAINT [DF__cou_count__cou_s__0D44F85C]  DEFAULT (NULL),
+	[cou_east] [varchar](30) NULL CONSTRAINT [DF__cou_count__cou_e__0E391C95]  DEFAULT (NULL),
+	[cou_west] [varchar](30) NULL CONSTRAINT [DF__cou_count__cou_w__0F2D40CE]  DEFAULT (NULL),
+	[cou_capital] [varchar](30) NULL CONSTRAINT [DF__cou_count__cou_c__10216507]  DEFAULT (NULL),
+	[cou_continentName] [varchar](15) NULL CONSTRAINT [DF__cou_count__cou_c__11158940]  DEFAULT (NULL),
+	[cou_continent] [char](2) NULL CONSTRAINT [DF__cou_count__cou_c__1209AD79]  DEFAULT (NULL),
+	[cou_languages] [varchar](100) NULL CONSTRAINT [DF__cou_count__cou_l__12FDD1B2]  DEFAULT (NULL),
+	[cou_isoAlpha3] [char](3) NULL CONSTRAINT [DF__cou_count__cou_i__13F1F5EB]  DEFAULT (NULL),
+	[cou_geonameId] [int] NULL CONSTRAINT [DF__cou_count__cou_g__14E61A24]  DEFAULT (NULL),
+	[cou_enabled] [bit] NOT NULL CONSTRAINT [DF_cou_country_cou_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_cou_country] PRIMARY KEY CLUSTERED 
+(
+	[cou_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[dic_dictionary](
+	[dic_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[dic_table] [char](3) NULL,
+	[dic_storeValue] [varchar](50) NULL,
+	[dic_displayValue] [varchar](50) NULL,
+	[dic_order] [int] NULL,
+	[dic_enabled] [bit] NOT NULL,
+ CONSTRAINT [PK_dic_dictionary] PRIMARY KEY CLUSTERED 
+(
+	[dic_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[ent_entity](
+	[ent_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ent_idTarget] [bigint] NULL,
+	[ent_email] [nvarchar](500) NULL,
+	[ent_password] [nvarchar](100) NULL,
+	[ent_firstName] [nvarchar](50) NULL,
+	[ent_lastName] [nvarchar](50) NULL,
+	[ent_profileName] [nvarchar](100) NULL,
+	[evn_idProfile] [bigint] NULL,
+	[evn_idCover] [bigint] NULL,
+	[ent_gender] [int] NULL CONSTRAINT [DF_ent_entity_ent_gender]  DEFAULT ((0)),
+	[ent_birthdate] [datetime] NULL,
+	[ent_close] [bit] NULL CONSTRAINT [DF_ent_entity_ent_close]  DEFAULT ((0)),
+	[ent_active] [bit] NULL CONSTRAINT [DF_ent_entity_ent_active]  DEFAULT ((1)),
+	[cou_id] [bigint] NULL,
+	[lan_id] [bigint] NULL,
+	[ent_typeEntity] [int] NULL CONSTRAINT [DF_ent_entity_ent_typeEntity]  DEFAULT ((1)),
+	[ent_timeZone] [datetimeoffset](7) NULL,
+	[ent_timestampModified] [datetime] NULL,
+	[ent_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_ent_entity_ent_timestampCreated]  DEFAULT (getutcdate()),
+	[ent_enabled] [bit] NOT NULL CONSTRAINT [DF_ent_entity_ent_enabled]  DEFAULT ((1)),
+	[ent_hash] [varchar](100) NULL,
+	[ent_profileCode] [varchar](20) NULL,
+	[ent_idFacebook] [varchar](50) NULL,
+	[ent_canPost] [bit] NOT NULL DEFAULT ((1)),
+ CONSTRAINT [PK_ent_entity] PRIMARY KEY CLUSTERED 
+(
+	[ent_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[evn_event](
+	[evn_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[evn_idTarget] [bigint] NULL,
+	[evn_system] [bit] NULL CONSTRAINT [DF_evn_event_evn_system]  DEFAULT ((0)),
+	[ent_idDo] [bigint] NULL,
+	[ent_idDd] [bigint] NULL,
+	[evn_typeEvent] [int] NULL CONSTRAINT [DF_evn_event_evn_typeEvent]  DEFAULT ((1)),
+	[evn_comment] [nvarchar](4000) NULL,
+	[blo_idMaterial] [bigint] NULL,
+	[evn_visibility] [int] NULL CONSTRAINT [DF_evn_event_evn_visibility]  DEFAULT ((1)),
+	[evn_locationString] [nvarchar](1000) NULL,
+	[evn_locationCode] [nchar](10) NULL,
+	[evn_latitude] [decimal](10, 6) NULL,
+	[evn_longitude] [decimal](10, 6) NULL,
+	[evn_externalType] [int] NULL CONSTRAINT [DF_evn_event_evn_externalType]  DEFAULT ((0)),
+	[evn_externalLink] [nvarchar](1000) NULL,
+	[evn_timestampModified] [datetime] NULL,
+	[evn_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_evn_event_evn_timestampCreated]  DEFAULT (getutcdate()),
+	[evn_enabled] [bit] NOT NULL CONSTRAINT [DF_evn_event_evn_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_evn_event] PRIMARY KEY CLUSTERED 
+(
+	[evn_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[lan_language](
+	[lan_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[lan_description] [nvarchar](100) NULL,
+	[lan_locale] [nvarchar](100) NULL,
+	[lan_languageCode] [nvarchar](2) NULL,
+	[lan_lcid] [nvarchar](5) NULL,
+	[lan_decimal] [int] NULL,
+	[lan_codePage] [int] NULL,
+	[blo_idIcon] [bigint] NULL,
+	[lan_enabled] [bit] NOT NULL CONSTRAINT [DF_lan_language_lan_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_lan_language] PRIMARY KEY CLUSTERED 
+(
+	[lan_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[lik_like](
+	[lik_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ent_id] [bigint] NULL,
+	[evn_id] [bigint] NULL,
+	[lik_typeLike] [int] NULL CONSTRAINT [DF_lik_like_lik_typeLike]  DEFAULT ((1)),
+	[lik_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_lik_like_lik_timestampCreated]  DEFAULT (getutcdate()),
+	[lik_enabled] [bit] NOT NULL CONSTRAINT [DF_lik_like_lik_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_lik_like] PRIMARY KEY CLUSTERED 
+(
+	[lik_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[rel_relationship](
+	[rel_id] [bigint] IDENTITY(1,1) NOT NULL,
+	[ent_idDo] [bigint] NULL,
+	[ent_idDd] [bigint] NULL,
+	[ent_idDr] [bigint] NULL,
+	[rel_timestampSuggested] [datetime] NULL,
+	[rel_suggested] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_suggested]  DEFAULT ((0)),
+	[rel_timestampOffered] [datetime] NULL,
+	[rel_offered] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_offered]  DEFAULT ((0)),
+	[rel_timestampResponse] [datetime] NULL,
+	[rel_accepted] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_accepted]  DEFAULT ((0)),
+	[rel_rejected] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_rejected]  DEFAULT ((0)),
+	[rel_blocked] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_blocked]  DEFAULT ((0)),
+	[rel_following] [bit] NULL CONSTRAINT [DF_rel_relationship_rel_following]  DEFAULT ((1)),
+	[rel_timestampModified] [datetime] NULL,
+	[rel_timestampCreated] [datetime] NOT NULL CONSTRAINT [DF_rel_relationship_rel_timestampCreated]  DEFAULT (getutcdate()),
+	[rel_enabled] [bit] NOT NULL CONSTRAINT [DF_rel_relationship_rel_enabled]  DEFAULT ((1)),
+ CONSTRAINT [PK_rel_relationship] PRIMARY KEY CLUSTERED 
+(
+	[rel_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+ALTER TABLE [dbo].[dic_dictionary] ADD  CONSTRAINT [DF_dic_dictionary_dic_enabled]  DEFAULT ((1)) FOR [dic_enabled]
+GO
+ALTER TABLE [dbo].[ale_alert]  WITH CHECK ADD  CONSTRAINT [FK_ale_alert_ent_entity] FOREIGN KEY([ent_id])
+REFERENCES [dbo].[ent_entity] ([ent_id])
+GO
+ALTER TABLE [dbo].[ale_alert] CHECK CONSTRAINT [FK_ale_alert_ent_entity]
+GO
+ALTER TABLE [dbo].[ent_entity]  WITH CHECK ADD  CONSTRAINT [FK_ent_entity_lan_language] FOREIGN KEY([lan_id])
+REFERENCES [dbo].[lan_language] ([lan_id])
+GO
+ALTER TABLE [dbo].[ent_entity] CHECK CONSTRAINT [FK_ent_entity_lan_language]
+GO
+ALTER TABLE [dbo].[lik_like]  WITH CHECK ADD  CONSTRAINT [FK_lik_like_ent_entity] FOREIGN KEY([ent_id])
+REFERENCES [dbo].[ent_entity] ([ent_id])
+GO
+ALTER TABLE [dbo].[lik_like] CHECK CONSTRAINT [FK_lik_like_ent_entity]
+GO
+ALTER TABLE [dbo].[lik_like]  WITH CHECK ADD  CONSTRAINT [FK_lik_like_evn_event] FOREIGN KEY([evn_id])
+REFERENCES [dbo].[evn_event] ([evn_id])
+GO
+ALTER TABLE [dbo].[lik_like] CHECK CONSTRAINT [FK_lik_like_evn_event]
+GO
+ALTER TABLE [dbo].[rel_relationship]  WITH CHECK ADD  CONSTRAINT [FK_rel_relationship_ent_entity] FOREIGN KEY([ent_idDo])
+REFERENCES [dbo].[ent_entity] ([ent_id])
+GO
+ALTER TABLE [dbo].[rel_relationship] CHECK CONSTRAINT [FK_rel_relationship_ent_entity]
+GO
+ALTER TABLE [dbo].[rel_relationship]  WITH CHECK ADD  CONSTRAINT [FK_rel_relationship_ent_entity1] FOREIGN KEY([ent_idDd])
+REFERENCES [dbo].[ent_entity] ([ent_id])
+GO
+ALTER TABLE [dbo].[rel_relationship] CHECK CONSTRAINT [FK_rel_relationship_ent_entity1]
+GO
+ALTER TABLE [dbo].[rel_relationship]  WITH CHECK ADD  CONSTRAINT [FK_rel_relationship_ent_entity2] FOREIGN KEY([ent_idDr])
+REFERENCES [dbo].[ent_entity] ([ent_id])
+GO
+ALTER TABLE [dbo].[rel_relationship] CHECK CONSTRAINT [FK_rel_relationship_ent_entity2]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	busca empresas
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_FIND_COMPANIES]
+@searchstr varchar(50) = '',
+@entIdSession bigint = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		-- Group
+		ent.ent_id as companyId,
+		ent.ent_firstName as companyName,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		(SELECT COUNT(1)
+			FROM rel_relationship
+			WHERE ((ent_idDo=@entIdSession AND ent_idDd=ent.ent_id) OR (ent_idDd=@entIdSession AND ent_idDo=ent.ent_id)) 
+			and rel_enabled=1 and rel_accepted=1) as isJoin
+	FROM ent_entity ent
+	inner join cou_country cou on ent.cou_id=cou.cou_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON ent.evn_idProfile = bloP.evn_id
+	WHERE ent.ent_active=1 AND ent.ent_enabled=1
+	AND ent.ent_typeEntity = 2 --Company
+	AND ent.ent_id <> @entIdSession
+	AND (ent.ent_firstName like '%'+@searchstr+'%')
+	ORDER BY ent.ent_firstName ASC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los amigos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_FIND_FRIENDS]
+@searchstr varchar(50) = '',
+@entIdSession bigint = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		-- User
+		ent.ent_id as userId,
+		ent.ent_firstName+' '+ent.ent_lastName as userName,
+		ent.ent_profileCode as userProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		cou.cou_countryName as country,
+		(SELECT COUNT(1)
+			FROM rel_relationship
+			WHERE ((ent_idDo=@entIdSession AND ent_idDd=ent.ent_id) OR (ent_idDd=@entIdSession AND ent_idDo=ent.ent_id)) 
+			and rel_enabled=1 and rel_blocked=0) as isFriend
+	FROM ent_entity ent
+	inner join cou_country cou on ent.cou_id=cou.cou_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON ent.evn_idProfile = bloP.evn_id
+	WHERE ent.ent_active=1
+	AND ent.ent_typeEntity = 1 --person
+	AND ent.ent_id <> @entIdSession
+	AND (ent.ent_firstName like '%'+@searchstr+'%' OR ent.ent_lastName like '%'+@searchstr+'%')
+	ORDER BY ent.ent_firstName ASC, ent.ent_lastName ASC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los grupos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_FIND_GROUPS]
+@searchstr varchar(50) = '',
+@entIdSession bigint = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		-- Group
+		ent.ent_id as groupId,
+		ent.ent_firstName as groupName,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		(SELECT COUNT(1)
+			FROM rel_relationship
+			WHERE ((ent_idDo=@entIdSession AND ent_idDd=ent.ent_id) OR (ent_idDd=@entIdSession AND ent_idDo=ent.ent_id)) 
+			and rel_enabled=1 and rel_accepted=1) as isJoin
+	FROM ent_entity ent
+	inner join cou_country cou on ent.cou_id=cou.cou_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON ent.evn_idProfile = bloP.evn_id
+	WHERE ent.ent_active=1 AND ent.ent_enabled=1
+	AND ent.ent_typeEntity = 3 --Group
+	AND ent.ent_id <> @entIdSession
+	AND (ent.ent_firstName like '%'+@searchstr+'%')
+	ORDER BY ent.ent_firstName ASC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todas las alertas
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_ALERTS]
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize) *
+	FROM
+	(
+		-- Friend
+		SELECT
+			ale.ale_id as alertId,
+			ent.ent_id as userId,
+			ent.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			dbo.toTimeStamp(ale.ale_timestampCreated) as alertDate,
+			ale_typeTarget as alertType,
+			ale.ale_view as alertView,
+			-- Params
+			ent.ent_firstName+' '+ent.ent_lastName as param1,
+			'' as param2,
+			'' as param3
+		FROM ale_alert ale
+		INNER JOIN  rel_relationship rel on ale.ale_idTarget=rel.rel_id
+		INNER JOIN	ent_entity ent ON rel.ent_idDo = ent.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON ent.evn_idProfile = bloP.evn_id
+		WHERE ale.ent_id = @entIdSession
+		AND ale.ale_enabled=1 and ent.ent_active=1 and ale.ale_typeTarget = 2
+
+		UNION
+
+		-- Group
+		SELECT
+			ale.ale_id as alertId,
+			ent.ent_id as userId,
+			ent.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			dbo.toTimeStamp(ale.ale_timestampCreated) as alertDate,
+			ale_typeTarget as alertType,
+			ale.ale_view as alertView,
+			-- Params
+			ent.ent_firstName+' '+ent.ent_lastName as param1,
+			entG.ent_firstName as param2,
+			entR.ent_firstName+' '+entR.ent_lastName as param3
+		FROM ale_alert ale
+		INNER JOIN  rel_relationship rel on ale.ale_idTarget=rel.rel_id
+		INNER JOIN	ent_entity ent ON rel.ent_idDo = ent.ent_id
+		INNER JOIN	ent_entity entG ON rel.ent_idDd = entG.ent_id
+		LEFT JOIN	ent_entity entR ON rel.ent_idDr = entR.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON (entR.evn_idProfile = bloP.evn_id and not rel.ent_idDr is null) OR (ent.evn_idProfile = bloP.evn_id and rel.ent_idDr is null)
+		WHERE ale.ent_id = @entIdSession
+		AND ale.ale_enabled=1 and ent.ent_active=1 and (ale.ale_typeTarget = 4 OR ale.ale_typeTarget = 5)
+
+		UNION
+
+		-- Company
+		SELECT
+			ale.ale_id as alertId,
+			ent.ent_id as userId,
+			ent.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			dbo.toTimeStamp(ale.ale_timestampCreated) as alertDate,
+			ale_typeTarget as alertType,
+			ale.ale_view as alertView,
+			-- Params
+			ent.ent_firstName+' '+ent.ent_lastName as param1,
+			'' as param2,
+			'' as param3
+		FROM ale_alert ale
+		INNER JOIN  rel_relationship rel on ale.ale_idTarget=rel.rel_id
+		INNER JOIN	ent_entity ent ON rel.ent_idDo = ent.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON ent.evn_idProfile = bloP.evn_id
+		WHERE ale.ent_id = @entIdSession
+		AND ale.ale_enabled=1 and ent.ent_active=1 and (ale.ale_typeTarget = 7)
+
+		UNION
+
+		-- Post / Comment
+		SELECT
+			ale.ale_id as alertId,
+			ent.ent_id as userId,
+			ent.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			dbo.toTimeStamp(ale.ale_timestampCreated) as alertDate,
+			ale_typeTarget as alertType,
+			ale.ale_view as alertView,
+			-- Params
+			ent.ent_firstName+' '+ent.ent_lastName as param1,
+			entG.ent_firstName as param2,
+			'' as param3
+		FROM ale_alert ale
+		INNER JOIN  evn_event evn on ale.ale_idTarget=evn.evn_id
+		INNER JOIN	ent_entity ent ON evn.ent_idDo = ent.ent_id
+		INNER JOIN	ent_entity entG ON evn.ent_idDd = entG.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON ent.evn_idProfile = bloP.evn_id
+		WHERE ale.ent_id = @entIdSession
+		AND ale.ale_enabled=1 and ent.ent_active=1 and (ale.ale_typeTarget = 1 OR ale.ale_typeTarget = 6)
+	) lis
+	WHERE ((lis.alertId<@intLastId AND @intLastId>0) OR @intLastId=0)
+	ORDER BY lis.alertId DESC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los contadores
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_BADGES]
+@entIdSession bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @ale_typeTarget int
+	DECLARE @ale_idTarget bigint
+
+	DECLARE @countFriend int = 0
+	DECLARE @countGroup int = 0
+	DECLARE @countMember int = 0
+	DECLARE @countFollower int = 0
+	DECLARE @countAll int = 0
+
+	DECLARE db_cursor CURSOR FOR  
+	(
+		SELECT ale.ale_typeTarget, ale.ale_idTarget
+		FROM ale_alert ale
+		WHERE ale.ent_id = @entIdSession and ale.ale_view=0
+		AND ale.ale_enabled=1
+	)
+
+	OPEN db_cursor   
+	FETCH NEXT FROM db_cursor INTO
+		@ale_typeTarget,
+		@ale_idTarget
+
+	WHILE @@FETCH_STATUS = 0   
+	BEGIN 
+
+		IF (@ale_typeTarget=2) SET @countFriend = @countFriend + 1
+		IF (@ale_typeTarget=4) SET @countGroup = @countGroup + 1
+		IF (@ale_typeTarget=5) SET @countMember = @countMember + 1
+		SET @countAll = @countAll + 1
+
+		FETCH NEXT FROM db_cursor INTO
+			@ale_typeTarget,
+			@ale_idTarget
+	END   
+
+	CLOSE db_cursor   
+	DEALLOCATE db_cursor
+
+	SELECT 
+		@countAll as [all],
+		@countFriend as friend,
+		@countGroup as [group],
+		@countMember as [member],
+		@countFollower as follower
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.03.21
+-- Description:	Retornar todos los comentarios del muro
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COMMENTS]
+@evnId bigint = 0,
+@evnIdTarget bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT *
+	FROM
+	(
+	SELECT TOP (@intPageSize)
+		--Post
+		evn.evn_id as postId,
+		evn.evn_comment as postText,
+		dbo.toTimeStamp(evn.evn_timestampCreated) as postCreated,
+		evn.evn_visibility as visibility,
+		-- Blob post
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		-- User
+		entO.ent_id as userId,
+		entO.ent_firstName+' '+entO.ent_lastName as userName,
+		entO.ent_profileCode as userProfileCode,
+		(select count(*) from lik_like where evn_id = evn.evn_id and lik_enabled=1) as countLikes,
+		convert(bit,case when lik.lik_id is null then 0 else 1 end) as isLike,
+		entO.ent_typeEntity as typeEntity
+	FROM evn_event evn
+	INNER JOIN	ent_entity entO ON evn.ent_idDo = entO.ent_id
+	LEFT JOIN	blo_blob blo ON evn.blo_idMaterial = blo.blo_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	LEFT JOIN lik_like lik ON evn.evn_id = lik.evn_id and lik.ent_id = @entIdSession and lik.lik_enabled=1
+	WHERE evn.evn_enabled = 1
+	AND entO.ent_enabled=1
+	AND ((evn.evn_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	AND ((@evnId=evn.evn_id AND @evnId>0) OR @evnId=0)
+	AND ((@evnIdTarget=evn.evn_idTarget AND @evnIdTarget>0) OR @evnIdTarget=0)
+	ORDER BY evn.evn_id DESC
+	) as lis
+	ORDER BY lis.postId ASC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los grupos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COMPANIES]
+@entIdCompany bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	/*
+	ent_idDo = @entIdSession : participante del grupo
+	ent_idDd = @entIdCompany : compania al que participa o quiere participar
+	ent_idDr : recomendacion a particpar en un grupo
+	*/
+
+	SELECT TOP (@intPageSize)
+		-- Group
+		rel.rel_id as joinId,
+		entD.ent_id as companyId,
+		entD.ent_firstName as companyName,
+		entD.ent_profileCode as companyProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		rel.rel_suggested,
+		rel.rel_accepted,
+		rel.rel_rejected,
+		rel.rel_following,
+		case when (rel.ent_idDr is null) then 'suggest' else 'invite' end as typeAction,
+		(
+			select count(*)
+			from rel_relationship
+			where ent_idDd = entD.ent_id
+			and rel_accepted = 1 and rel_enabled = 1
+		) as countMember,
+		CASE WHEN (@entIdSession=entD.ent_idTarget) THEN 1 ELSE 0 END as isMe
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entD.evn_idProfile = bloP.evn_id
+	WHERE rel.rel_enabled=1
+	AND entD.ent_enabled=1 AND entD.ent_typeEntity=2 --company
+	AND ((rel.rel_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	AND ((@entIdCompany=entD.ent_id AND @entIdCompany>0) OR (@entIdCompany=0 AND rel.ent_idDo = @entIdSession))
+	ORDER BY rel.rel_id DESC
+
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los contadores de las companias
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COUNT_COMPANY]
+@entId bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT count(*) as countAll
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entD.evn_idProfile = bloP.evn_id
+	WHERE rel.ent_idDo = @entId
+	AND rel.rel_enabled=1 and entD.ent_active=1
+	AND entD.ent_typeEntity=2
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los contadores de amigos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COUNT_FRIEND]
+@entId bigint = 0,
+@entIdSession bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @rel_id bigint
+	DECLARE @rel_suggested bit
+	DECLARE @rel_offered bit
+	DECLARE @rel_accepted bit
+	DECLARE @rel_rejected bit
+	DECLARE @rel_blocked bit
+	DECLARE @rel_following bit
+	DECLARE @typeAction varchar(10)
+
+	DECLARE @countAll int = 0
+	DECLARE @countSend int = 0
+	DECLARE @countReceive int = 0
+
+	DECLARE db_cursor CURSOR FOR  
+	(
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'send' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDo = @entId AND 
+			rel.rel_enabled=1 and entD.ent_active=1 and entD.ent_typeEntity = 1
+			AND rel.rel_blocked=0
+
+		UNION
+
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'receive' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entD ON rel.ent_idDo = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDd = @entId AND 
+			rel.rel_enabled=1 and entD.ent_active=1 and entD.ent_typeEntity = 1
+			AND rel.rel_blocked=0
+	)
+
+	OPEN db_cursor   
+	FETCH NEXT FROM db_cursor INTO
+		@rel_id,
+		@rel_suggested,
+		@rel_offered,
+		@rel_accepted,
+		@rel_rejected,
+		@rel_blocked,
+		@rel_following,
+		@typeAction
+
+	WHILE @@FETCH_STATUS = 0   
+	BEGIN 
+
+		IF (@rel_accepted=1 or @rel_blocked=1) SET @countAll = @countAll + 1
+		IF (@rel_accepted=0 and @rel_blocked=0 and @rel_rejected=0 and @typeAction='send') SET @countSend = @countSend + 1
+		IF (@rel_accepted=0 and @rel_blocked=0 and @rel_rejected=0 and @typeAction='receive') SET @countReceive = @countReceive + 1
+
+		FETCH NEXT FROM db_cursor INTO
+			@rel_id,
+			@rel_suggested,
+			@rel_offered,
+			@rel_accepted,
+			@rel_rejected,
+			@rel_blocked,
+			@rel_following,
+			@typeAction
+	END   
+
+	CLOSE db_cursor   
+	DEALLOCATE db_cursor
+
+	SELECT @countAll as countAll, 
+		@countSend as countSend, 
+		@countReceive as countReceive
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los contadores de grupos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COUNT_GROUP]
+@entIdGroup bigint = 0,
+@entId bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @rel_id bigint
+	DECLARE @rel_suggested bit
+	DECLARE @rel_offered bit
+	DECLARE @rel_accepted bit
+	DECLARE @rel_rejected bit
+	DECLARE @rel_following bit
+	DECLARE @typeAction varchar(10)
+
+	DECLARE @countAll int = 0
+	DECLARE @countSend int = 0
+	DECLARE @countReceive int = 0
+
+	DECLARE db_cursor CURSOR FOR  
+	(
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_following,
+			'receive' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDo = @entIdGroup
+		AND rel.rel_enabled=1 and rel_rejected=0 --and rel_suggested=1
+		and entD.ent_active=1 and entD.ent_enabled=1 and entD.ent_typeEntity=3
+		AND rel.rel_blocked=0
+
+		UNION
+
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_following,
+			'send' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entD ON rel.ent_idDo = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDd = @entIdGroup
+		AND rel.rel_enabled=1 and rel_rejected=0 
+		and entD.ent_active=1 and entD.ent_enabled=1 --and entD.ent_typeEntity=3
+		AND rel.rel_blocked=0
+	)
+
+	OPEN db_cursor   
+	FETCH NEXT FROM db_cursor INTO
+		@rel_id,
+		@rel_suggested,
+		@rel_offered,
+		@rel_accepted,
+		@rel_rejected,
+		@rel_following,
+		@typeAction
+
+	WHILE @@FETCH_STATUS = 0   
+	BEGIN 
+
+		IF (@rel_accepted=1 and @typeAction='receive') SET @countAll = @countAll + 1
+		IF (@rel_accepted=0 and @rel_rejected=0 and @typeAction='send') SET @countSend = @countSend + 1
+		IF (@rel_accepted=0 and @rel_rejected=0 and @typeAction='receive' and @rel_suggested=1) SET @countReceive = @countReceive + 1
+
+		FETCH NEXT FROM db_cursor INTO
+			@rel_id,
+			@rel_suggested,
+			@rel_offered,
+			@rel_accepted,
+			@rel_rejected,
+			@rel_following,
+			@typeAction
+	END   
+
+	CLOSE db_cursor   
+	DEALLOCATE db_cursor
+
+	SELECT @countAll as countAll, 
+		@countSend as countSend, 
+		@countReceive as countReceive
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los contadores de miembros
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_COUNT_MEMBER]
+@entId bigint = 0,
+@entIdSession bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @rel_id bigint
+	DECLARE @rel_suggested bit
+	DECLARE @rel_offered bit
+	DECLARE @rel_accepted bit
+	DECLARE @rel_rejected bit
+	DECLARE @rel_blocked bit
+	DECLARE @rel_following bit
+	DECLARE @typeAction varchar(10)
+
+	DECLARE @countAll int = 0
+	DECLARE @countSend int = 0
+	DECLARE @countReceive int = 0
+
+	DECLARE db_cursor CURSOR FOR  
+	(
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'send' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entR ON rel.ent_idDr = entR.ent_id
+		INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDd = @entId and entD.ent_typeEntity = 3 AND
+			rel.ent_idDr = @entIdSession AND rel.rel_enabled=1 and entD.ent_active=1 and entR.ent_typeEntity = 1 
+			AND rel_rejected=0
+
+
+		UNION
+
+		SELECT
+			rel.rel_id,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'receive' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entO ON rel.ent_idDo = entO.ent_id
+		INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDd = @entId and entD.ent_typeEntity = 3 AND
+			rel.rel_enabled=1 and entD.ent_active=1 and entO.ent_typeEntity = 1 
+			AND rel_rejected=0
+			AND (ent_idDr<>@entIdSession OR ent_idDr IS NULL)
+	)
+
+	OPEN db_cursor   
+	FETCH NEXT FROM db_cursor INTO
+		@rel_id,
+		@rel_suggested,
+		@rel_offered,
+		@rel_accepted,
+		@rel_rejected,
+		@rel_blocked,
+		@rel_following,
+		@typeAction
+
+	WHILE @@FETCH_STATUS = 0   
+	BEGIN 
+
+		IF (@rel_accepted=1 or @rel_blocked=1) SET @countAll = @countAll + 1
+		IF (@rel_accepted=0 and @rel_blocked=0 and @typeAction='send') SET @countSend = @countSend + 1
+		IF (@rel_accepted=0 and @rel_blocked=0 and @typeAction='receive') SET @countReceive = @countReceive + 1
+
+		FETCH NEXT FROM db_cursor INTO
+			@rel_id,
+			@rel_suggested,
+			@rel_offered,
+			@rel_accepted,
+			@rel_rejected,
+			@rel_blocked,
+			@rel_following,
+			@typeAction
+	END   
+
+	CLOSE db_cursor   
+	DEALLOCATE db_cursor
+
+	SELECT @countAll as countAll, 
+		@countSend as countSend, 
+		@countReceive as countReceive
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los miembros de un grupo
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_FOLLOWERS]
+@entId bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		-- User
+		rel.rel_id as friendId,
+		entO.ent_id as userId,
+		entO.ent_firstName+' '+entO.ent_lastName as userName,
+		entO.ent_profileCode as userProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		rel.rel_suggested,
+		rel.rel_offered,
+		rel.rel_accepted,
+		rel.rel_rejected,
+		rel.rel_blocked,
+		rel.rel_following,
+		CASE WHEN (rel_accepted=1) THEN 'all' ELSE 'receive' END as typeAction
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entO ON rel.ent_idDo = entO.ent_id
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	WHERE rel.ent_idDd = @entId
+	AND entO.ent_typeEntity = 1 AND entD.ent_typeEntity = 2
+	AND (rel.rel_timestampResponse is null OR (not rel.rel_timestampResponse is null AND rel.rel_accepted=1))
+	AND rel.rel_enabled=1 and entO.ent_active=1
+	AND ((rel.rel_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	ORDER BY rel.rel_id DESC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los amigos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_FRIENDS]
+@entId bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize) *
+	FROM (
+		SELECT
+			-- User
+			rel.rel_id as friendId,
+			entD.ent_id as userId,
+			entD.ent_firstName+' '+entD.ent_lastName as userName,
+			entD.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'send' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entD.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDo = @entId
+		AND entD.ent_typeEntity = 1
+		AND rel.rel_enabled=1 and entD.ent_active=1
+
+		UNION
+
+		SELECT
+			-- User
+			rel.rel_id as friendId,
+			entO.ent_id as userId,
+			entO.ent_firstName+' '+entO.ent_lastName as userName,
+			entO.ent_profileCode as userProfileCode,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+			rel.rel_suggested,
+			rel.rel_offered,
+			rel.rel_accepted,
+			rel.rel_rejected,
+			rel.rel_blocked,
+			rel.rel_following,
+			'receive' as typeAction
+		FROM rel_relationship rel
+		INNER JOIN	ent_entity entO ON rel.ent_idDo = entO.ent_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON entO.evn_idProfile = bloP.evn_id
+		WHERE rel.ent_idDd = @entId
+		AND entO.ent_typeEntity = 1
+		AND rel.rel_enabled=1 and entO.ent_active=1
+		AND rel.rel_blocked=0
+
+	) as lis
+	WHERE ((lis.friendId<@intLastId AND @intLastId>0) OR @intLastId=0)
+	ORDER BY lis.friendId DESC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.06.13
+-- Description:	Retornar todas las galerias de un usuario
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_GALLERIES]
+@evnId bigint = 0,
+@entId bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		--Post
+		evn.evn_id as postId,
+		evn.evn_comment as postText,
+		upper(convert(nvarchar(36), blo.blo_guid))+'.'+blo.blo_extension as postGuid,
+		evn.evn_typeEvent as typeEvent,
+		dbo.toTimeStamp(evn.evn_timestampCreated) as postCreated,
+		evn.evn_visibility as visibility,
+		-- Blob post
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		blo.blo_width as width,
+		blo.blo_height as height,
+		-- User
+		entO.ent_id as userId,
+		entO.ent_typeEntity as typeEntity,
+		CASE WHEN (entO.ent_lastName IS NULL) THEN entO.ent_firstName ELSE entO.ent_firstName+' '+entO.ent_lastName END as userNameO,
+		case when (evn.ent_idDo=evn.ent_idDd) then null else 
+			CASE WHEN (entD.ent_lastName IS NULL) THEN entD.ent_firstName ELSE entD.ent_firstName+' '+entD.ent_lastName END
+		end as userNameD,
+		entO.ent_profileCode as userProfileCodeO,
+		case when (evn.ent_idDo=evn.ent_idDd) then null else entD.ent_profileCode end as userProfileCodeD,
+		evn.evn_externalType as postExtType,
+		evn.evn_externalLink as postExtLink,
+		(select count(*) from evn_event where evn_idTarget = evn.evn_id and evn_enabled=1 and evn_typeEvent=2) as countComments,
+		(select count(*) from lik_like where evn_id = evn.evn_id and lik_enabled=1) as countLikes,
+		convert(bit,case when lik.lik_id is null then 0 else 1 end) as isLike,
+		dbo.getCommentFromPost(
+			evn.evn_id,
+			@entIdSession) as lastComments,
+		dbo.getPhotosFromGallery(
+			evn.evn_id,
+			@entIdSession) as lastPhotos,
+		evn.evn_system as isSystem,
+		rel.rel_following
+	FROM evn_event evn
+	INNER JOIN	ent_entity entO ON evn.ent_idDo = entO.ent_id
+	INNER JOIN	ent_entity entD ON evn.ent_idDd = entD.ent_id
+	LEFT JOIN  rel_relationship rel ON ((rel.ent_idDo = entO.ent_id and rel.ent_idDd = entD.ent_id) OR (rel.ent_idDo = entD.ent_id and rel.ent_idDd = entO.ent_id)) and rel.rel_accepted=1 and rel.rel_enabled=1
+	LEFT JOIN	blo_blob blo ON evn.blo_idMaterial = blo.blo_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	LEFT JOIN lik_like lik ON evn.evn_id = lik.evn_id and lik.ent_id = @entIdSession and lik.lik_enabled=1
+	WHERE evn.evn_enabled = 1 --post enable
+	AND evn.evn_idTarget is null
+	AND entO.ent_enabled=1 AND entD.ent_enabled=1 --entity enable
+	AND ((evn.evn_id<@intLastId AND @intLastId>0) OR @intLastId=0) --paging
+	AND ((@evnId=evn.evn_id AND @evnId>0) OR @evnId=0)
+	AND (
+			(@entId=evn.ent_idDd AND @entId>0)
+			OR (@entId=0 AND evn.evn_visibility=7 AND @evnId=0) --anonymous post
+			OR (@entId=0 AND @evnId>0)
+		)
+	AND (rel.rel_following IS NULL OR rel.rel_following=1) --following
+	AND evn.evn_typeEvent = 4
+	ORDER BY evn.evn_id DESC
+END
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los grupos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_GROUPS]
+@entIdGroup bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15,
+@accepted bit = null,
+@rejected bit = null,
+@suggested bit = null,
+@typeAction int = null -- 0: suggested / 1: invited
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	/*
+	ent_idDo = @entIdSession : participante del grupo
+	ent_idDd = @entIdGroup : grupo al que participa o quiere participar
+	ent_idDr : recomendacion a particpar en un grupo
+	*/
+
+	SELECT TOP (@intPageSize)
+		-- Group
+		rel.rel_id as joinId,
+		entD.ent_id as groupId,
+		entD.ent_firstName as groupName,
+		entD.ent_profileCode as groupProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		rel.rel_suggested,
+		rel.rel_accepted,
+		rel.rel_rejected,
+		rel.rel_following,
+		case when (rel.ent_idDr is null) then 'suggest' else 'invite' end as typeAction,
+		(
+			select count(*)
+			from rel_relationship
+			where ent_idDd = entD.ent_id
+			and rel_accepted = 1 and rel_enabled = 1
+		) as countMember,
+		CASE WHEN (@entIdSession=entD.ent_idTarget) THEN 1 ELSE 0 END as isMe
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entD.evn_idProfile = bloP.evn_id
+	WHERE rel.rel_enabled=1
+	AND entD.ent_enabled=1 AND entD.ent_typeEntity=3
+	AND ((entD.ent_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	AND ((@entIdGroup=entD.ent_id AND @entIdGroup>0) OR (@entIdGroup=0 AND rel.ent_idDo = @entIdSession))
+	AND rel.rel_blocked=0
+	AND ((rel.rel_accepted=@accepted and not @accepted is null) or (@accepted is null))
+	AND ((rel.rel_rejected=@rejected and not @rejected is null) or (@rejected is null))
+	AND ((rel.rel_suggested=@suggested and not @suggested is null) or (@suggested is null))
+	AND ((rel.ent_idDr is null and @typeAction=0) or (not rel.ent_idDr is null and @typeAction=1) or (@typeAction is null))
+	ORDER BY rel.rel_id DESC
+
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los grupos
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_GROUPSFRIEND]
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	/*
+	ent_idDo = @entIdSession : participante del grupo
+	ent_idDd = @entIdGroup : grupo al que participa o quiere participar
+	ent_idDr : recomendacion a particpar en un grupo
+	*/
+
+	SELECT DISTINCT TOP (@intPageSize)
+		-- Group
+		entD.ent_id as groupId,
+		entD.ent_firstName as groupName,
+		entD.ent_profileCode as groupProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		CASE WHEN (relO.rel_timestampResponse is null) THEN relO.rel_id ELSE null END as joinId,
+		(
+			select count(*)
+			from rel_relationship
+			where ent_idDd = entD.ent_id
+			and rel_accepted = 1 and rel_enabled = 1
+		) as countMember
+	FROM ent_entity entD 
+	INNER JOIN rel_relationship rel ON rel.ent_idDd = entD.ent_id AND rel.rel_enabled=1
+	LEFT JOIN rel_relationship relO ON relO.ent_idDd = entD.ent_id AND relO.ent_idDo=@entIdSession AND relO.rel_enabled=1 AND relO.rel_timestampResponse is NULL
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entD.evn_idProfile = bloP.evn_id
+	WHERE entD.ent_enabled=1 AND entD.ent_typeEntity=3 AND entD.ent_idTarget=rel.ent_idDo
+	AND ((entD.ent_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	AND rel.ent_idDo IN (
+		SELECT CASE WHEN (ent_idDo=@entIdSession) THEN ent_idDd ELSE ent_idDo END
+		FROM rel_relationship rel2
+		INNER JOIN ent_entity ent2 on rel2.ent_idDo=ent2.ent_id
+		INNER JOIN ent_entity ent3 on rel2.ent_idDd=ent3.ent_id
+		WHERE (ent_idDo = @entIdSession OR ent_idDd = @entIdSession)
+		AND ent2.ent_typeEntity = 1 AND ent3.ent_typeEntity = 1
+		AND rel2.rel_accepted = 1 AND rel2.rel_enabled = 1 AND rel2.rel_blocked = 0
+	)
+	AND NOT (NOT relO.rel_id IS NULL AND relO.rel_accepted=1)
+	ORDER BY entD.ent_id DESC
+
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.06.27
+-- Description:	Retornar todas las entidades para la API
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_LIST_ENTITIES]
+@entId bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		CASE WHEN (entO.ent_id=@entId) THEN entD.ent_id ELSE entO.ent_id END as entityId,
+		CASE WHEN (entO.ent_id=@entId) THEN 
+			CASE WHEN (entD.ent_lastName IS NULL) THEN entD.ent_firstName ELSE entD.ent_firstName+' '+entD.ent_lastName END
+		ELSE 
+			CASE WHEN (entO.ent_lastName IS NULL) THEN entO.ent_firstName ELSE entO.ent_firstName+' '+entO.ent_lastName END
+		END as description,
+		CASE WHEN (entO.ent_id=@entId) THEN entD.ent_typeEntity ELSE entO.ent_typeEntity END as type
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entO ON rel.ent_idDo = entO.ent_id
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	WHERE (rel.ent_idDo = @entId OR rel.ent_idDd = @entId)
+	AND rel.rel_accepted=1
+	AND rel.rel_enabled=1 and entO.ent_enabled=1 and entD.ent_enabled=1
+	AND entO.ent_active=1 and entD.ent_active=1
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar todos los miembros de un grupo
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_MEMBERS]
+@entId bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT TOP (@intPageSize)
+		-- User
+		rel.rel_id as memberId,
+		entO.ent_id as userId,
+		entO.ent_firstName+' '+entO.ent_lastName as userName,
+		entO.ent_profileCode as userProfileCode,
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		rel.rel_suggested,
+		rel.rel_offered,
+		rel.rel_accepted,
+		rel.rel_rejected,
+		rel.rel_blocked,
+		rel.rel_following,
+		CASE WHEN (rel_accepted=1) THEN 'all' ELSE 
+			CASE WHEN (ent_idDd=@entId and ent_idDr is NULL) THEN 'receive' ELSE 'send' END
+		END as typeAction,
+		CAST(
+			(select case when count(1)>0 then 1 else 0 end
+			from rel_relationship rel2
+			where ((rel2.ent_idDo=entO.ent_id and rel2.ent_idDd=@entIdSession) or (rel2.ent_idDo=@entIdSession and rel2.ent_idDd=entO.ent_id) or (entO.ent_id=@entIdSession))
+			and rel2.rel_accepted=1 and rel2.rel_enabled=1) as bit
+		) as isFriend
+	FROM rel_relationship rel
+	INNER JOIN	ent_entity entO ON rel.ent_idDo = entO.ent_id
+	INNER JOIN	ent_entity entD ON rel.ent_idDd = entD.ent_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	WHERE rel.ent_idDd = @entId
+	AND entO.ent_typeEntity = 1 AND entD.ent_typeEntity = 3
+	AND (rel.rel_timestampResponse is null OR (not rel.rel_timestampResponse is null AND rel.rel_accepted=1))
+	AND rel.rel_enabled=1 and entO.ent_active=1
+	AND ((rel.rel_id<@intLastId AND @intLastId>0) OR @intLastId=0)
+	ORDER BY rel.rel_id DESC
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.03.19
+-- Description:	Retornar todos los post del muro
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_POSTS]
+@evnId bigint = 0,
+@entId bigint = 0,
+@entIdSession bigint = 0,
+@intLastId int = 0,
+@intPageSize int = 15,
+@typeEvent int = 0 --All wall
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @typeEntity AS INT = 0;
+
+	IF (@entIdSession>0)
+	BEGIN
+		SELECT @typeEntity = ent_typeEntity
+		FROM ent_entity
+		WHERE ent_id = @entIdSession;
+	END;
+
+	SELECT TOP (@intPageSize)
+		--Post
+		evn.evn_id as postId,
+		evn.evn_comment as postText,
+		upper(convert(nvarchar(36), blo.blo_guid))+'.'+blo.blo_extension as postGuid,
+		evn.evn_typeEvent as typeEvent,
+		dbo.toTimeStamp(evn.evn_timestampCreated) as postCreated,
+		evn.evn_visibility as visibility,
+		-- Blob post
+		upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as profileGuid,
+		blo.blo_width as width,
+		blo.blo_height as height,
+		-- User
+		entO.ent_id as userId,
+		entO.ent_typeEntity as typeEntity,
+		CASE WHEN (entO.ent_lastName IS NULL) THEN entO.ent_firstName ELSE entO.ent_firstName+' '+entO.ent_lastName END as userNameO,
+		case when (evn.ent_idDo=evn.ent_idDd) then null else 
+			CASE WHEN (entD.ent_lastName IS NULL) THEN entD.ent_firstName ELSE entD.ent_firstName+' '+entD.ent_lastName END
+		end as userNameD,
+		entO.ent_profileCode as userProfileCodeO,
+		case when (evn.ent_idDo=evn.ent_idDd) then null else entD.ent_profileCode end as userProfileCodeD,
+		evn.evn_externalType as postExtType,
+		evn.evn_externalLink as postExtLink,
+		(select count(*) from evn_event where evn_idTarget = evn.evn_id and evn_enabled=1 and evn_typeEvent=2) as countComments,
+		(select count(*) from lik_like where evn_id = evn.evn_id and lik_enabled=1) as countLikes,
+		convert(bit,case when lik.lik_id is null then 0 else 1 end) as isLike,
+		dbo.getCommentFromPost(
+			evn.evn_id,
+			@entIdSession) as lastComments,
+		dbo.getPhotosFromGallery(
+			evn.evn_id,
+			@entIdSession) as lastPhotos,
+		evn.evn_system as isSystem,
+		rel.rel_following
+	FROM evn_event evn
+	INNER JOIN	ent_entity entO ON evn.ent_idDo = entO.ent_id
+	INNER JOIN	ent_entity entD ON evn.ent_idDd = entD.ent_id
+	LEFT JOIN   rel_relationship rel ON ((rel.ent_idDo = entO.ent_id and rel.ent_idDd = entD.ent_id) OR (rel.ent_idDo = entD.ent_id and rel.ent_idDd = entO.ent_id)) and rel.rel_accepted=1 and rel.rel_enabled=1
+	LEFT JOIN	blo_blob blo ON evn.blo_idMaterial = blo.blo_id
+	LEFT JOIN	(
+				SELECT blo_id,blo_guid,blo_extension, evn_id
+				FROM blo_blob _blo
+				INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+				) as bloP ON entO.evn_idProfile = bloP.evn_id
+	LEFT JOIN lik_like lik ON evn.evn_id = lik.evn_id and lik.ent_id = @entIdSession and lik.lik_enabled=1
+	WHERE evn.evn_enabled = 1 --post enable
+	--AND evn.evn_idTarget is null 
+	AND entO.ent_enabled=1 AND entD.ent_enabled=1 --entity enable
+	AND (
+			(evn.evn_id<@intLastId AND @intLastId>0) 
+			OR @intLastId=0
+		) --paging
+	AND (
+			(@evnId=evn.evn_id AND @evnId>0) 
+			OR @evnId=0
+		) -- one or more post
+	AND (
+			(
+				(
+					@entId=evn.ent_idDd 
+					OR (evn.ent_idDd IN (	SELECT case when (ent_idDo=@entId) THEN ent_idDd ELSE ent_idDo END
+														FROM rel_relationship rel1
+														INNER JOIN ent_entity ent1 ON rel1.ent_idDd = ent1.ent_id
+														WHERE ent1.ent_typeEntity IN (2,3) 
+														AND (ent_idDo=@entId OR ent_idDd=@entId)
+														AND rel_accepted=1 
+														AND rel_following=1 
+														AND ent_enabled=1 
+														AND rel_enabled=1
+											) AND @entIdSession=@entId AND @typeEvent=0 AND @typeEntity=1
+						)
+				) AND @entId>0
+			) --group/entity post
+			OR (@entId=0 AND evn.evn_visibility=7 AND @evnId=0) --anonymous post
+			OR (@entId=0 AND @evnId>0)
+		)
+	AND (
+			(@entId<>@entIdSession AND evn.evn_visibility<>7 AND @entId>0 AND (rel.rel_blocked=0 OR rel.rel_blocked IS NULL)) 
+			OR (@entId=@entIdSession AND @entId>0) 
+			OR @entId=0 
+			OR entD.ent_typeEntity>1
+		) --anonymous only me
+	AND (rel.rel_following IS NULL OR rel.rel_following=1) --following
+	AND ((@typeEvent=0) OR (@typeEvent>0 AND evn.evn_typeEvent=@typeEvent)) --type event
+	AND (evn.evn_typeEvent <> 2) --not comment
+	AND (evn.evn_typeEvent <> 4) --not gallery
+	ORDER BY evn.evn_id DESC
+END
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Ricardo Espeche
+-- Create date: 2016.05.02
+-- Description:	Retornar un perfil determinado
+-- =============================================
+CREATE PROCEDURE [dbo].[SP_GET_PROFILE]
+@entId bigint = 0
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT
+			-- User
+			ent_email,
+			ent_firstName,
+			ent_lastName,
+			ent_gender,
+			case when (ent_birthdate is null) then null else convert(date,ent_birthdate) end as ent_birthdate,
+			lan_id,
+			ent.cou_id,
+			cou_countryName,
+			upper(convert(nvarchar(36), bloP.blo_guid))+'.'+bloP.blo_extension as photoProfile,
+			upper(convert(nvarchar(36), bloC.blo_guid))+'.'+bloC.blo_extension as photoCover,
+			ent_typeEntity,
+			ent_canPost
+		FROM ent_entity ent
+		INNER JOIN cou_country cou on ent.cou_id = cou.cou_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloP ON ent.evn_idProfile = bloP.evn_id
+		LEFT JOIN	(
+					SELECT blo_id,blo_guid,blo_extension, evn_id
+					FROM blo_blob _blo
+					INNER JOIN evn_event _evn ON _evn.blo_idMaterial = _blo.blo_id
+					) as bloC ON ent.evn_idCover = bloC.evn_id
+		WHERE ent.ent_id = @entId
+		AND ent.ent_enabled=1
+END
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[SP_MAIL_RESETPASS]	
+@id as bigint = 0
+as
+	SET NOCOUNT ON;
+
+	UPDATE [dbo].[ent_entity]
+	SET [ent_hash] = CONVERT(NVARCHAR(32),HashBytes('MD5', CONVERT( VARCHAR(24), GETDATE(), 121)),2)
+	WHERE [ent_id] = @id
+
+	SELECT [ent_firstName],
+		[ent_lastName],
+		[ent_email],
+		[ent_hash]
+	FROM [dbo].[ent_entity]
+	WHERE [ent_id] = @id
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Target Object' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ale_alert', @level2type=N'COLUMN',@level2name=N'ale_idTarget'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Event/Friend/Like' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ale_alert', @level2type=N'COLUMN',@level2name=N'ale_typeTarget'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'is acked' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ale_alert', @level2type=N'COLUMN',@level2name=N'ale_view'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Time acked' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ale_alert', @level2type=N'COLUMN',@level2name=N'ale_timestampViewed'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'F/M/O/X' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ent_entity', @level2type=N'COLUMN',@level2name=N'ent_gender'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Person/Entity/Group' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ent_entity', @level2type=N'COLUMN',@level2name=N'ent_typeEntity'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Post/Comment/Message/Album/Item/Location/Profile/Cover' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'evn_event', @level2type=N'COLUMN',@level2name=N'evn_typeEvent'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Public/Friends/Private/Anonymous' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'evn_event', @level2type=N'COLUMN',@level2name=N'evn_visibility'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'String Description' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'evn_event', @level2type=N'COLUMN',@level2name=N'evn_locationString'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Location code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'evn_event', @level2type=N'COLUMN',@level2name=N'evn_locationCode'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Link/Video/Url/None(X)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'evn_event', @level2type=N'COLUMN',@level2name=N'evn_externalType'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Origen' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'lik_like', @level2type=N'COLUMN',@level2name=N'ent_id'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Like/Love/Angry' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'lik_like', @level2type=N'COLUMN',@level2name=N'lik_typeLike'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'lik_like', @level2type=N'COLUMN',@level2name=N'lik_timestampCreated'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'lik_like', @level2type=N'COLUMN',@level2name=N'lik_enabled'
+GO
+USE [master]
+GO
+ALTER DATABASE [SocialNet] SET  READ_WRITE 
+GO

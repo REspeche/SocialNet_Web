@@ -1,0 +1,51 @@
+﻿.list {
+  display: block;
+  padding-top: 15px;
+}
+.page__title {
+    display: block;
+    font-size: 2.5rem;
+    border-bottom: 1px solid #ddd;
+    margin: 20px 30px 10px 0;
+}
+.friend-block {
+    background: rgba(255,0,0,0.3);
+}
+.highlight {
+	color: #ff4081;
+}
+#previewSearch {
+    margin-top: 20px;
+}
+#previewSearch .card__author-content {
+    margin-left: 50px;
+}
+#previewSearch .card__author-des {
+    font-size: 1.3rem;
+    color: #999;
+    font-weight: 100;
+    line-height: 1.5;
+    font-family: Roboto light;
+    display: block;
+}
+#previewSearch i {
+    float: right;
+    margin-top: 5px;
+}
+
+@media only screen and (max-device-width: 850px) {
+    .mdl-layout__header-row .mdl-navigation__link {
+        padding: 0 15px;
+    }
+    .list {
+        display: block;
+    }
+    .mdl-tabs__tab {
+        text-align: left;
+        line-height: 20px;
+        font-size: 13px;
+    }
+    .mdl-tabs__tab .mdl-badge {
+        margin-left: 18px;
+    }
+}

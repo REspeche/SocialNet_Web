@@ -1,0 +1,66 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@{
+    ViewBag.PageUser = Rules.pageUser.Group;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/group/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/group/index")
+}
+<main class="mdl-layout__content">
+    <div ng-controller="groupCtrl" ng-init="loadInit()" whenscroll="showMore()">
+        <div id="content">
+            <div class="mdl-tabs mdl-js-tabs">
+                <div class="mdl-tabs__tab-bar">
+                    <a href="#tab1-panel" class="mdl-tabs__tab {{(tab==1)?'is-active':''}}"
+                       ng-click="clickTab(1)">@Site.tabGroup1<span class="count" ng-show="countAll>0">{{countAll}}</span></a>
+                    <a href="#tab2-panel" class="mdl-tabs__tab {{(tab==2)?'is-active':''}}"
+                       ng-click="clickTab(2)">@Site.tabGroup2<span class="mdl-badge" data-badge="{{countReceive}}" ng-if="countReceive>0"></span></a>
+                    <a href="#tab3-panel" class="mdl-tabs__tab {{(tab==3)?'is-active':''}}"
+                       ng-click="clickTab(3)">@Site.tabGroup3</a>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==1)?'is-active':''}}" id="tab1-panel">
+                    <div class="list">
+                        <div ng-repeat="item in groups" on-finish-render
+                             class="card__group mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Group")
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==2)?'is-active':''}}" id="tab2-panel">
+                    <div class="list">
+                        <div ng-repeat="item in groupsSuggest" on-finish-render
+                             class="card__group mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Group")
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==3)?'is-active':''}}" id="tab3-panel">
+                    <div class="list">
+                        <div ng-repeat="item in groupsFriend" on-finish-render
+                             class="card__group mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Group")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_AddGroup")
+        @Html.Partial("_SearchGroup")
+    </div>
+</main>
+<div ng-show="session.view_isMember==0">
+    @Html.Partial("_AddButton")
+</div>

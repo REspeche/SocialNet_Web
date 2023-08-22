@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "SocialNet_Web\Web.csproj", "{6EA16C46-78F6-447B-8BE9-8E69CF4BD8EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E90BF4A-C393-46CA-9A24-7A1C3538240A}"
+	ProjectSection(SolutionItems) = preProject
+		scriptDB.txt = scriptDB.txt
+		sitemap.xml = sitemap.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_Resource", "Web_Resource\Web_Resource.csproj", "{3A2E5C3C-557B-41D9-8FAD-D4AFAD7187B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_BusinessLayer", "Web_BusinessLayer\Web_BusinessLayer.csproj", "{ACBC89FC-0D8C-4A6C-B718-D1BF7C6A14B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EA16C46-78F6-447B-8BE9-8E69CF4BD8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EA16C46-78F6-447B-8BE9-8E69CF4BD8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EA16C46-78F6-447B-8BE9-8E69CF4BD8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EA16C46-78F6-447B-8BE9-8E69CF4BD8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A2E5C3C-557B-41D9-8FAD-D4AFAD7187B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A2E5C3C-557B-41D9-8FAD-D4AFAD7187B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A2E5C3C-557B-41D9-8FAD-D4AFAD7187B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A2E5C3C-557B-41D9-8FAD-D4AFAD7187B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACBC89FC-0D8C-4A6C-B718-D1BF7C6A14B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACBC89FC-0D8C-4A6C-B718-D1BF7C6A14B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACBC89FC-0D8C-4A6C-B718-D1BF7C6A14B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACBC89FC-0D8C-4A6C-B718-D1BF7C6A14B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 4
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://incloux.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SocialNet_Web\\Web.csproj
+		SccProjectName1 = SocialNet_Web
+		SccLocalPath1 = SocialNet_Web
+		SccProjectUniqueName2 = Web_BusinessLayer\\Web_BusinessLayer.csproj
+		SccProjectName2 = Web_BusinessLayer
+		SccLocalPath2 = Web_BusinessLayer
+		SccProjectUniqueName3 = Web_Resource\\Web_Resource.csproj
+		SccProjectName3 = Web_Resource
+		SccLocalPath3 = Web_Resource
+	EndGlobalSection
+EndGlobal

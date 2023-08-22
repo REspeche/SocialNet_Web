@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e66c97250fd54573b29b84c78e422166" Name="Diagram1" ZoomLevel="93">
+        <EntityTypeShape EntityType="SocialNetModel.ale_alert" Width="1.5" PointX="5.25" PointY="11.75" />
+        <EntityTypeShape EntityType="SocialNetModel.cou_country" Width="1.5" PointX="7.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SocialNetModel.dic_dictionary" Width="1.5" PointX="9.75" PointY="0.75" />
+        <EntityTypeShape EntityType="SocialNetModel.ent_entity" Width="1.5" PointX="3" PointY="4.375" />
+        <EntityTypeShape EntityType="SocialNetModel.lan_language" Width="1.5" PointX="0.75" PointY="5.875" />
+        <EntityTypeShape EntityType="SocialNetModel.lik_like" Width="1.5" PointX="8.25" PointY="6.125" />
+        <EntityTypeShape EntityType="SocialNetModel.rel_relationship" Width="1.5" PointX="5.25" PointY="3.125" />
+        <EntityTypeShape EntityType="SocialNetModel.sysdiagram" Width="1.5" PointX="7.75" PointY="9.75" />
+        <AssociationConnector Association="SocialNetModel.FK_ale_alert_ent_entity" />
+        <AssociationConnector Association="SocialNetModel.FK_ent_entity_lan_language" />
+        <AssociationConnector Association="SocialNetModel.FK_lik_like_ent_entity" />
+        <AssociationConnector Association="SocialNetModel.FK_rel_relationship_ent_entity" />
+        <AssociationConnector Association="SocialNetModel.FK_rel_relationship_ent_entity1" />
+        <AssociationConnector Association="SocialNetModel.FK_rel_relationship_ent_entity2" />
+        <EntityTypeShape EntityType="SocialNetModel.evn_event" Width="1.5" PointX="10.375" PointY="4" />
+        <AssociationConnector Association="SocialNetModel.FK_lik_like_evn_event" />
+        <EntityTypeShape EntityType="SocialNetModel.blo_blob" Width="1.5" PointX="0.75" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

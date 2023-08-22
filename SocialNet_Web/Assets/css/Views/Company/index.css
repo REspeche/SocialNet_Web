@@ -1,0 +1,43 @@
+﻿.card__company{
+  width: 256px;
+  height: 256px;
+  margin: 15px 30px 15px 0;
+  float: left;
+}
+.card__company > .card__menu {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: none;
+}
+.card__company:hover .card__menu {
+    display: block;
+}
+.card__company > .mdl-card__actions {
+  height: 68px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+}
+.card__company > .mdl-card__actions > .card__action {
+  float: right;
+  color: #fff;
+  margin-top: -25px;
+}
+.card__company > .mdl-card__actions > a {
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 100;
+}
+.card__company > .mdl-card__actions > span {
+    display: block;
+    font-size: 12px;
+    padding-top: 3px;
+    color: #eee;
+}
+
+@media only screen and (max-device-width: 850px) {
+    .card__company {
+        margin: 30px auto;
+        float: none;
+    }
+}

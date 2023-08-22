@@ -1,0 +1,68 @@
+﻿.card__album {
+    height: 400px;
+    background-color: #ccc;
+    overflow: hidden;
+    position: relative;
+}
+
+.card__album > .card__image {
+    background-color: #eee;
+    background-position: center / cover;
+    position: relative;
+    height: 230px;
+    width: 214px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 7px solid #fff;
+    border-bottom: 30px solid #fff;
+    position: absolute;
+}
+
+.card__album > .card__image:nth-child(1) {
+    top: -10px;
+    left: 50px;
+    -ms-transform: rotate(-30deg); /* IE 9 */
+    -webkit-transform: rotate(-30deg); /* Safari */
+    transform: rotate(-30deg);
+}
+.card__album > .card__image:nth-child(2) {
+    top: 30px;
+    left: 190px;
+    -ms-transform: rotate(5deg); /* IE 9 */
+    -webkit-transform: rotate(5deg); /* Safari */
+    transform: rotate(5deg);
+    z-index: 2;
+}
+.card__album > .card__image:nth-child(3) {
+    top: 140px;
+    left: -10px;
+    -ms-transform: rotate(-70deg); /* IE 9 */
+    -webkit-transform: rotate(-70deg); /* Safari */
+    transform: rotate(-70deg);
+    z-index:1;
+}
+.card__album > .card__image:nth-child(4) {
+    top: 180px;
+    left: 170px;
+    -ms-transform: rotate(-10deg); /* IE 9 */
+    -webkit-transform: rotate(-10deg); /* Safari */
+    transform: rotate(-10deg);
+    z-index: 3;
+}
+
+.pagePhoto .card__article {
+    position: absolute;
+    top: -39px;
+    color: #fff;
+    width: 100%;
+    background-color: rgba(0,0,0,.7);
+    left: 0;
+    padding-left: 15px;
+    height: 40px;
+    z-index: 5;
+}
+
+.pagePhoto .card__article > p {
+    font-size: 20px;
+    line-height: 40px;
+}

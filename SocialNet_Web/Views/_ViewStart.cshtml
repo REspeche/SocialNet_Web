@@ -1,0 +1,11 @@
+﻿@{
+    if (Request.Browser.IsMobileDevice)
+    {
+        Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    DisplayModeProvider.Instance.RequireConsistentDisplayMode = true;
+}

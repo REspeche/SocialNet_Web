@@ -1,0 +1,68 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@{
+    ViewBag.PageUser = Rules.pageUser.Member;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/friend/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/friend/index")
+}
+<main class="mdl-layout__content">
+    @Html.Partial("_Cover")
+    <div ng-controller="friendCtrl" ng-init="loadInit()">
+        <div id="content">
+            <div class="mdl-tabs mdl-js-tabs">
+                <div class="mdl-tabs__tab-bar">
+                    <a href="#tab1-panel" class="mdl-tabs__tab {{(tab==1)?'is-active':''}}"
+                       ng-click="clickTab(1)">@Site.tabMember1<span class="count" ng-show="countAll>0">{{countAll}}</span></a>
+                    <a href="#tab2-panel" class="mdl-tabs__tab {{(tab==2)?'is-active':''}}"
+                       ng-click="clickTab(2)" ng-if="isLogin && (session.userId==session.view_userId || session.userId==session.view_targetId)">@Site.tabFriend2<span class="count" ng-show="countSend>0">{{countSend}}</span></a>
+                    <a href="#tab3-panel" class="mdl-tabs__tab {{(tab==3)?'is-active':''}}"
+                       ng-click="clickTab(3)" ng-if="isLogin && session.userId==session.view_targetId">@Site.tabFriend3<span class="mdl-badge" data-badge="{{countReceive}}" ng-show="countReceive>0"></span></a>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==1)?'is-active':''}}" id="tab1-panel">
+                    <div class="list">
+                        <div ng-repeat="item in friends" on-finish-render
+                             class="card__friend mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Member")
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==2)?'is-active':''}}" id="tab2-panel"
+                     ng-if="isLogin && session.userId==session.view_targetId">
+                    <div class="list">
+                        <div ng-repeat="item in friendsSend" on-finish-render
+                             class="card__friend mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Friend")
+                        </div>
+                    </div>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==3)?'is-active':''}}" id="tab3-panel"
+                     ng-if="isLogin && session.userId==session.view_targetId">
+                    <div class="list">
+                        <div ng-repeat="item in friendsReceive" on-finish-render
+                             class="card__friend mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Friend")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_SearchFriend")
+    </div>
+</main>
+<div ng-show="session.view_isMember==1 || session.view_targetId==session.userId">
+    @Html.Partial("_AddButton")
+</div>

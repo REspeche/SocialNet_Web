@@ -1,0 +1,117 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+<div class="card__post">
+    <div class="card__image" ng-if="item.typeEvent==5 || item.typeEvent==7 || item.typeEvent==8"
+         href="@(String.Concat(CommonHelper.getHandlerPath())){{item.postGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.PhotoFull))"
+         data-text="{{item.postText}}" data-author="{{item.userName}}"
+         style="height:{{Math.round(imgWidth/(item.width/item.height))}}px;background-image:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.postGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))')">
+    </div>
+    <div class="card__video" ng-if="item.typeEvent==9 && item.postExtType==2"
+         style="background-image:url('http://img.youtube.com/vi/{{item.postExtLink}}/0.jpg')">
+        <a ng-href="http://www.youtube.com/watch?v={{item.postExtLink}}" class="isPreviewOnPopup">
+            <i class="material-icons">play_circle_outline</i>
+        </a>
+    </div>
+    <div class="card__album" ng-if="item.typeEvent==4">
+        <div class="card__image" ng-repeat="photo in item.lastPhotos"
+                style="background-image:url('@(String.Concat(CommonHelper.getHandlerPath())){{photo.postGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))')">
+        </div>
+    </div>
+
+    <div class="card__content card__padding">
+        <div class="card__meta">
+            <div class="card__author">
+                <img ng-src="@(CommonHelper.getHandlerPath()){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{item.userName}}" title="{{item.userName}}">
+                <div class="card__author-content">
+                    <a href="{{item.userProfileCode==''?'#':'/'+item.userProfileCode}}">{{item.userName}}</a>
+                    <span ng-if="item.userProfileCodeDes">
+                        <span class="keyboard_arrow_right"></span>
+                        <a href="{{item.userProfileCodeDes==''?'#':'/'+item.userProfileCodeDes}}">{{item.userNameDes}}</a>
+                    </span>
+                    <span class="card__event" ng-if="item.typeEvent==7">@Site.lblEventUser1</span>
+                    <span class="card__event" ng-if="item.typeEvent==8">@Site.lblEventUser2</span>
+                    <span class="card__event" ng-if="item.typeEvent==9">@Site.lblEventUser3</span>
+                    <span class="card__event" ng-if="item.typeEvent==4">@Site.lblEventUser4</span>
+                    <span class="card__author-date">
+                        <abbr data-time="{{item.postCreated}}" class="post_show_date"></abbr>
+                    </span>
+                </div>
+            </div>
+            <div class="card__menu" ng-show="(isLogin && (item.userId==session.userId || session.userId==session.view_userId) && item.isSystem==0)">
+                <button id="card-menu-actions-{{item.postId}}" class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">keyboard_arrow_down</i>
+                </button>
+
+                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                    for="card-menu-actions-{{item.postId}}">
+                    <li class="mdl-menu__item" ng-click="editPost($index)" ng-if="item.countComments==0 && !item.isSystem">@Site.mnuEditPost</li>
+                    <li class="mdl-menu__item" ng-click="removePost($index)">@Site.mnuRemovePost</li>
+                </ul>
+            </div>
+        </div>
+
+        <article class="card__article">
+            <p ng-bind-html="item.postText | linky:'_blank'"></p>
+        </article>
+    </div>
+
+    <div class="card__action">
+        <span ng-show="isLogin && item.countLikes>0">+{{item.countLikes}}</span>
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-class="{'mdl-button--colored':item.isLike}"
+                ng-show="isLogin" ng-click="likePost($index)">
+            <i class="material-icons">{{item.countLikes == 0 ? "favorite_border" : "favorite"}}</i>
+        </button>
+        <span ng-show="item.countComments>0">{{item.countComments}}</span>
+        <button class="mdl-button mdl-js-button mdl-button--icon" ng-click="showComment($index)" 
+                ng-show="(isLogin || (!isLogin && item.countComments>0))">
+            <i class="material-icons">{{item.countComments == 0 ? "chat_bubble_outline" : "chat_bubble"}}</i>
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--icon" 
+                ng-show="isLogin && session.typeEntity==1 && item.isSystem==0">
+            <i class="material-icons">share</i>
+        </button>
+    </div>
+</div>
+<div class="card__comment" ng-show="(isLogin)?cardCommentShow[item.postId]:(cardCommentShow[item.postId] && item.countComments>0)">
+    <div class="list_comments">
+        <div class="more_comments" ng-show="item.countComments>item.lastComments.length">
+            <a href ng-click="getMoreComment($index)">Ver comentarios anteriores</a>
+        </div>
+        <div class="item_comment comment_{{comment.postId}}" ng-repeat="comment in item.lastComments">
+            <div class="card__author">
+                <img ng-src="@(CommonHelper.getHandlerPath()){{comment.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{comment.userName}}" title="{{comment.userName}}">
+            </div>
+            <div class="text_comment">
+                <div class="author">
+                    <span><a href="{{comment.userProfileCode==''?'#':'/'+comment.userProfileCode}}">{{comment.userName}}</a></span>
+                    <span class="card__author-date">
+                        <abbr data-time="{{comment.postCreated}}" class="post_show_date"></abbr>
+                    </span>
+                </div>
+                <span ng-bind-html="comment.postText | linky:'_blank'"></span>
+            </div>
+            <div class="card__action">
+                <span ng-show="isLogin && comment.countLikes>0">+{{comment.countLikes}}</span>
+                <button class="mdl-button mdl-js-button mdl-button--icon" ng-class="{'mdl-button--colored':comment.isLike}"
+                        ng-show="isLogin" ng-click="likeComment($parent.$index,$index)">
+                    <i class="material-icons">{{comment.countLikes == 0 ? "favorite_border" : "favorite"}}</i>
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--icon" ng-show="(isLogin && (comment.userId==session.userId || session.userId==session.view_userId))"
+                        ng-click="removeComment($parent.$index,$index)">
+                    <i class="material-icons">delete</i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="add_comment" ng-if="isLogin && (session.typeEntity==1 || (session.typeEntity!=1 && session.view_userId==session.userId))">
+        <div class="card__author">
+            <img ng-src="{{session.photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{session.userName}}" title="{{session.userName}}">
+        </div>
+        <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__inputCustom" type="text" id="txtComment-{{item.postId}}"
+                   ng-keyup="$event.keyCode == 13 && submitComment($parent.$index)"
+                   placeholder="Escribe un comentario...">
+        </div>
+    </div>
+</div>

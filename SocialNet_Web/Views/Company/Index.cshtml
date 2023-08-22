@@ -1,0 +1,42 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@{
+    ViewBag.PageUser = Rules.pageUser.Company;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/company/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/company/index")
+}
+<main class="mdl-layout__content">
+    <div ng-controller="companyCtrl" ng-init="loadInit()">
+        <div id="content">
+            <div class="mdl-tabs mdl-js-tabs">
+                <div class="mdl-tabs__tab-bar">
+                    <a href="#tab1-panel" class="mdl-tabs__tab is-active">@Site.tabCompany1<span class="count" ng-show="countAll>0">{{countAll}}</span></a>
+                </div>
+                <div class="mdl-tabs__panel {{(tab==1)?'is-active':''}}" id="tab1-panel">
+                    <div class="list">
+                        <div ng-repeat="item in companies" on-finish-render
+                             class="card__company mdl-card mdl-shadow--2dp"
+                             style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                            @Html.Partial("_Company")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_SearchCompany")
+    </div>
+</main>
+<div ng-show="session.view_isMember==0">
+    @Html.Partial("_AddButton")
+</div>

@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Platform = "Mobile";
+}
+<!DOCTYPE html>
+<html lang="@Session["locale"]">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @RenderSection("header")
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    @if (Request.Browser.Type.Contains("Safari"))
+    {
+        <link rel="stylesheet" href="~/Assets/css/Modules/browsers/safari.css">
+    }
+    @Styles.Render("~/css/layout")
+    @RenderSection("style")
+    @Scripts.Render("~/js/layout.mobile")
+</head>
+<body ng-app="mainApp" ng-controller="mainCtrl" ng-strict-di ng-cloak>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <!-- Header -->
+        @Html.Partial("_Header")
+
+        <!-- Container -->
+        @RenderBody()
+
+        <!-- Inner objects -->
+        @Html.Partial("_InnerObject")
+    </div>
+</body>
+@RenderSection("script", required: false)
+</html>

@@ -1,0 +1,166 @@
+﻿#content {
+    display: block;
+}
+
+.editing {
+    z-index: 2;
+}
+.profile-card-square.mdl-card {
+    max-width: 615px;
+    min-height: 120px;
+    margin: 30px auto;
+    width: 100%;
+    overflow: visible;
+}
+.profile-card-square .mdl-card__supporting-text {
+    overflow: visible;
+}
+.profile-card-square > .mdl-card__title {
+    color: #fff;
+    max-height: 60px;
+    background-color:#3498db;
+}
+
+.mdl-dialog__actions {
+    padding: 0;
+}
+
+.mdl-card__supporting-text {
+    width: auto;
+    padding-bottom:0;
+}
+
+.panelAlert .mdl-card__title {
+    background-color: #f44336 !important;
+}
+
+.panelAlert .mdl-textfield {
+    margin-bottom: 20px;
+}
+
+.imgProfile {
+    text-align: center;
+    min-height: 328px;
+}
+
+.imgProfile img {
+    margin: 0 auto 15px;
+}
+
+.imgProfile img.img_profile {
+    width: 328px;
+}
+
+.imgProfile img.img_cover {
+    width: 100%;
+}
+
+.mdl-textfield {
+    width: 100%;
+}
+
+.mdl-card__title i {
+    margin-right: 15px;
+}
+
+.field_input {
+    margin-bottom: 24px;
+    min-height: 45px;
+}
+
+.item__label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.item__value {
+    margin-top: 24px;
+    font-size: 1.7rem;
+}
+
+label.label_date {
+    top: 0;
+    color: #227fbb;
+    font-size: 12px;
+}
+
+.ADMdtp-container .masterInput input {
+    color: inherit;
+}
+
+#uploadImg {
+    background-color: #eee;
+    min-height: 328px;
+    width: 100%;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+#uploadImg i._bg {
+    text-align: center;
+    margin: 80px auto 10px;
+    width: 100%;
+    font-size: 12em;
+    opacity: .3;
+}
+#uploadImg span._text {
+    display: block;
+    text-align: center;
+    font-size: 1.6em;
+}
+#uploadImg button.clearItem {
+    float: right;
+    color: #fff;
+    margin: 5px;
+}
+
+#uploadImg button.addItem {
+    position: absolute;
+}
+
+#uploadImg span {
+    height: 175px;
+    display: block;
+}
+
+div.thumbnail {
+    height: 328px;
+    overflow: hidden;
+    background-position: 50% 50%;
+    margin: 0 auto;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.mdl-textfield__label {
+    color: #227fbb;
+    font-size: 12px;
+    top: 4px;
+    visibility: visible;
+}
+
+.mdl-textfield.is-dirty .mdl-textfield__label, 
+.mdl-textfield.has-placeholder .mdl-textfield__label {
+    visibility: visible;
+}
+
+@media only screen and (max-device-width: 850px) {
+
+    .imgProfile {
+        min-height: 245px;
+    }
+
+    .imgProfile img.img_profile {
+        max-height: 214px;
+        width: auto;
+    }
+
+    #uploadImg {
+        min-height: 214px;
+    }
+
+    #uploadImg i._bg {
+        margin: 30px auto 10px;
+    }
+}

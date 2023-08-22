@@ -1,0 +1,7 @@
+﻿Sitemap: http://www.pryf.com/sitemap.xml
+User-agent: *
+Disallow: /assets/css/
+Disallow: /assets/img/
+Disallow: /assets/js/
+Disallow: /*.js$
+Disallow: /*.css$

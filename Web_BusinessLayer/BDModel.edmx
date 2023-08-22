@@ -1,0 +1,1562 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SocialNetModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ale_alert">
+          <Key>
+            <PropertyRef Name="ale_id" />
+          </Key>
+          <Property Name="ale_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ent_id" Type="bigint" />
+          <Property Name="ale_send" Type="bit" />
+          <Property Name="ale_timestampSent" Type="datetime" />
+          <Property Name="ale_idTarget" Type="bigint" />
+          <Property Name="ale_typeTarget" Type="int" />
+          <Property Name="ale_view" Type="bit" />
+          <Property Name="ale_timestampViewed" Type="datetime" />
+          <Property Name="ale_timestampCreated" Type="datetime" Nullable="false" />
+          <Property Name="ale_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="blo_blob">
+          <Key>
+            <PropertyRef Name="blo_id" />
+          </Key>
+          <Property Name="blo_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="blo_guid" Type="uniqueidentifier" />
+          <Property Name="blo_container" Type="int" />
+          <Property Name="blo_extension" Type="nvarchar" MaxLength="4" />
+          <Property Name="blo_width" Type="int" />
+          <Property Name="blo_height" Type="int" />
+          <Property Name="blo_timestampCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="cou_country">
+          <Key>
+            <PropertyRef Name="cou_id" />
+          </Key>
+          <Property Name="cou_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="cou_countryCode" Type="char" MaxLength="2" />
+          <Property Name="cou_countryName" Type="varchar" MaxLength="45" />
+          <Property Name="cou_currencyCode" Type="char" MaxLength="3" />
+          <Property Name="cou_fipsCode" Type="char" MaxLength="2" />
+          <Property Name="cou_isoNumeric" Type="char" MaxLength="4" />
+          <Property Name="cou_north" Type="varchar" MaxLength="30" />
+          <Property Name="cou_south" Type="varchar" MaxLength="30" />
+          <Property Name="cou_east" Type="varchar" MaxLength="30" />
+          <Property Name="cou_west" Type="varchar" MaxLength="30" />
+          <Property Name="cou_capital" Type="varchar" MaxLength="30" />
+          <Property Name="cou_continentName" Type="varchar" MaxLength="15" />
+          <Property Name="cou_continent" Type="char" MaxLength="2" />
+          <Property Name="cou_languages" Type="varchar" MaxLength="100" />
+          <Property Name="cou_isoAlpha3" Type="char" MaxLength="3" />
+          <Property Name="cou_geonameId" Type="int" />
+          <Property Name="cou_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="dic_dictionary">
+          <Key>
+            <PropertyRef Name="dic_id" />
+          </Key>
+          <Property Name="dic_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dic_table" Type="char" MaxLength="3" />
+          <Property Name="dic_storeValue" Type="varchar" MaxLength="50" />
+          <Property Name="dic_displayValue" Type="varchar" MaxLength="50" />
+          <Property Name="dic_order" Type="int" />
+          <Property Name="dic_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ent_entity">
+          <Key>
+            <PropertyRef Name="ent_id" />
+          </Key>
+          <Property Name="ent_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ent_idTarget" Type="bigint" />
+          <Property Name="ent_email" Type="nvarchar" MaxLength="500" />
+          <Property Name="ent_password" Type="nvarchar" MaxLength="100" />
+          <Property Name="ent_firstName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ent_lastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ent_profileName" Type="nvarchar" MaxLength="100" />
+          <Property Name="evn_idProfile" Type="bigint" />
+          <Property Name="evn_idCover" Type="bigint" />
+          <Property Name="ent_gender" Type="int" />
+          <Property Name="ent_birthdate" Type="datetime" />
+          <Property Name="ent_close" Type="bit" />
+          <Property Name="ent_active" Type="bit" />
+          <Property Name="cou_id" Type="bigint" />
+          <Property Name="lan_id" Type="bigint" />
+          <Property Name="ent_typeEntity" Type="int" />
+          <Property Name="ent_timeZone" Type="datetimeoffset" Precision="7" />
+          <Property Name="ent_timestampModified" Type="datetime" />
+          <Property Name="ent_timestampCreated" Type="datetime" Nullable="false" />
+          <Property Name="ent_enabled" Type="bit" Nullable="false" />
+          <Property Name="ent_hash" Type="varchar" MaxLength="100" />
+          <Property Name="ent_profileCode" Type="varchar" MaxLength="20" />
+          <Property Name="ent_idFacebook" Type="varchar" MaxLength="50" />
+          <Property Name="ent_canPost" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="evn_event">
+          <Key>
+            <PropertyRef Name="evn_id" />
+          </Key>
+          <Property Name="evn_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="evn_idTarget" Type="bigint" />
+          <Property Name="evn_system" Type="bit" />
+          <Property Name="ent_idDo" Type="bigint" />
+          <Property Name="ent_idDd" Type="bigint" />
+          <Property Name="evn_typeEvent" Type="int" />
+          <Property Name="evn_comment" Type="nvarchar" MaxLength="4000" />
+          <Property Name="blo_idMaterial" Type="bigint" />
+          <Property Name="evn_visibility" Type="int" />
+          <Property Name="evn_locationString" Type="nvarchar" MaxLength="1000" />
+          <Property Name="evn_locationCode" Type="nchar" MaxLength="10" />
+          <Property Name="evn_latitude" Type="decimal" Precision="10" Scale="6" />
+          <Property Name="evn_longitude" Type="decimal" Precision="10" Scale="6" />
+          <Property Name="evn_externalType" Type="int" />
+          <Property Name="evn_externalLink" Type="nvarchar" MaxLength="1000" />
+          <Property Name="evn_timestampModified" Type="datetime" />
+          <Property Name="evn_timestampCreated" Type="datetime" Nullable="false" />
+          <Property Name="evn_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="lan_language">
+          <Key>
+            <PropertyRef Name="lan_id" />
+          </Key>
+          <Property Name="lan_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="lan_description" Type="nvarchar" MaxLength="100" />
+          <Property Name="lan_locale" Type="nvarchar" MaxLength="100" />
+          <Property Name="lan_languageCode" Type="nvarchar" MaxLength="2" />
+          <Property Name="lan_lcid" Type="nvarchar" MaxLength="5" />
+          <Property Name="lan_decimal" Type="int" />
+          <Property Name="lan_codePage" Type="int" />
+          <Property Name="blo_idIcon" Type="bigint" />
+          <Property Name="lan_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="lik_like">
+          <Key>
+            <PropertyRef Name="lik_id" />
+          </Key>
+          <Property Name="lik_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ent_id" Type="bigint" />
+          <Property Name="evn_id" Type="bigint" />
+          <Property Name="lik_typeLike" Type="int" />
+          <Property Name="lik_timestampCreated" Type="datetime" Nullable="false" />
+          <Property Name="lik_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="rel_relationship">
+          <Key>
+            <PropertyRef Name="rel_id" />
+          </Key>
+          <Property Name="rel_id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ent_idDo" Type="bigint" />
+          <Property Name="ent_idDd" Type="bigint" />
+          <Property Name="ent_idDr" Type="bigint" />
+          <Property Name="rel_timestampSuggested" Type="datetime" />
+          <Property Name="rel_suggested" Type="bit" />
+          <Property Name="rel_timestampOffered" Type="datetime" />
+          <Property Name="rel_offered" Type="bit" />
+          <Property Name="rel_timestampResponse" Type="datetime" />
+          <Property Name="rel_accepted" Type="bit" />
+          <Property Name="rel_rejected" Type="bit" />
+          <Property Name="rel_blocked" Type="bit" />
+          <Property Name="rel_following" Type="bit" />
+          <Property Name="rel_timestampModified" Type="datetime" />
+          <Property Name="rel_timestampCreated" Type="datetime" Nullable="false" />
+          <Property Name="rel_enabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK_ale_alert_ent_entity">
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="0..1" />
+          <End Role="ale_alert" Type="Self.ale_alert" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="ale_alert">
+              <PropertyRef Name="ent_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ent_entity_lan_language">
+          <End Role="lan_language" Type="Self.lan_language" Multiplicity="0..1" />
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="lan_language">
+              <PropertyRef Name="lan_id" />
+            </Principal>
+            <Dependent Role="ent_entity">
+              <PropertyRef Name="lan_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_lik_like_ent_entity">
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="0..1" />
+          <End Role="lik_like" Type="Self.lik_like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="lik_like">
+              <PropertyRef Name="ent_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_lik_like_evn_event">
+          <End Role="evn_event" Type="Self.evn_event" Multiplicity="0..1" />
+          <End Role="lik_like" Type="Self.lik_like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="evn_event">
+              <PropertyRef Name="evn_id" />
+            </Principal>
+            <Dependent Role="lik_like">
+              <PropertyRef Name="evn_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity">
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="0..1" />
+          <End Role="rel_relationship" Type="Self.rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity1">
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="0..1" />
+          <End Role="rel_relationship" Type="Self.rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDd" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity2">
+          <End Role="ent_entity" Type="Self.ent_entity" Multiplicity="0..1" />
+          <End Role="rel_relationship" Type="Self.rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDr" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SP_FIND_COMPANIES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="searchstr" Type="varchar" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_FIND_FRIENDS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="searchstr" Type="varchar" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_FIND_GROUPS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="searchstr" Type="varchar" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_ALERTS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_BADGES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COMMENTS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="evnId" Type="bigint" Mode="In" />
+          <Parameter Name="evnIdTarget" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COMPANIES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdCompany" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COUNT_COMPANY" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COUNT_FRIEND" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COUNT_GROUP" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdGroup" Type="bigint" Mode="In" />
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_COUNT_MEMBER" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_FOLLOWERS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_FRIENDS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_GALLERIES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="evnId" Type="bigint" Mode="In" />
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_GROUPS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdGroup" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+          <Parameter Name="accepted" Type="bit" Mode="In" />
+          <Parameter Name="rejected" Type="bit" Mode="In" />
+          <Parameter Name="suggested" Type="bit" Mode="In" />
+          <Parameter Name="typeAction" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_GROUPSFRIEND" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_LIST_ENTITIES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_MEMBERS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_POSTS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="evnId" Type="bigint" Mode="In" />
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+          <Parameter Name="entIdSession" Type="bigint" Mode="In" />
+          <Parameter Name="intLastId" Type="int" Mode="In" />
+          <Parameter Name="intPageSize" Type="int" Mode="In" />
+          <Parameter Name="typeEvent" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_PROFILE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="entId" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="SP_MAIL_RESETPASS" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id" Type="bigint" Mode="In" />
+        </Function>
+        <EntityContainer Name="SocialNetModelStoreContainer">
+          <EntitySet Name="ale_alert" EntityType="Self.ale_alert" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="blo_blob" EntityType="Self.blo_blob" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="cou_country" EntityType="Self.cou_country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="dic_dictionary" EntityType="Self.dic_dictionary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ent_entity" EntityType="Self.ent_entity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="evn_event" EntityType="Self.evn_event" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="lan_language" EntityType="Self.lan_language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="lik_like" EntityType="Self.lik_like" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="rel_relationship" EntityType="Self.rel_relationship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ale_alert_ent_entity" Association="Self.FK_ale_alert_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="ale_alert" EntitySet="ale_alert" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ent_entity_lan_language" Association="Self.FK_ent_entity_lan_language">
+            <End Role="lan_language" EntitySet="lan_language" />
+            <End Role="ent_entity" EntitySet="ent_entity" />
+          </AssociationSet>
+          <AssociationSet Name="FK_lik_like_ent_entity" Association="Self.FK_lik_like_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="lik_like" EntitySet="lik_like" />
+          </AssociationSet>
+          <AssociationSet Name="FK_lik_like_evn_event" Association="Self.FK_lik_like_evn_event">
+            <End Role="evn_event" EntitySet="evn_event" />
+            <End Role="lik_like" EntitySet="lik_like" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity" Association="Self.FK_rel_relationship_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity1" Association="Self.FK_rel_relationship_ent_entity1">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity2" Association="Self.FK_rel_relationship_ent_entity2">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SocialNetModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="SocialNetEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ale_alert" EntityType="SocialNetModel.ale_alert" />
+          <EntitySet Name="cou_country" EntityType="SocialNetModel.cou_country" />
+          <EntitySet Name="dic_dictionary" EntityType="SocialNetModel.dic_dictionary" />
+          <EntitySet Name="ent_entity" EntityType="SocialNetModel.ent_entity" />
+          <EntitySet Name="lan_language" EntityType="SocialNetModel.lan_language" />
+          <EntitySet Name="lik_like" EntityType="SocialNetModel.lik_like" />
+          <EntitySet Name="rel_relationship" EntityType="SocialNetModel.rel_relationship" />
+          <EntitySet Name="sysdiagrams" EntityType="SocialNetModel.sysdiagram" />
+          <AssociationSet Name="FK_ale_alert_ent_entity" Association="SocialNetModel.FK_ale_alert_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="ale_alert" EntitySet="ale_alert" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ent_entity_lan_language" Association="SocialNetModel.FK_ent_entity_lan_language">
+            <End Role="lan_language" EntitySet="lan_language" />
+            <End Role="ent_entity" EntitySet="ent_entity" />
+          </AssociationSet>
+          <AssociationSet Name="FK_lik_like_ent_entity" Association="SocialNetModel.FK_lik_like_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="lik_like" EntitySet="lik_like" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity" Association="SocialNetModel.FK_rel_relationship_ent_entity">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity1" Association="SocialNetModel.FK_rel_relationship_ent_entity1">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+          <AssociationSet Name="FK_rel_relationship_ent_entity2" Association="SocialNetModel.FK_rel_relationship_ent_entity2">
+            <End Role="ent_entity" EntitySet="ent_entity" />
+            <End Role="rel_relationship" EntitySet="rel_relationship" />
+          </AssociationSet>
+          <FunctionImport Name="SP_MAIL_RESETPASS" ReturnType="Collection(SocialNetModel.SP_MAIL_RESETPASS_Result)">
+          <Parameter Name="id" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <EntitySet Name="evn_event" EntityType="SocialNetModel.evn_event" />
+          <AssociationSet Name="FK_lik_like_evn_event" Association="SocialNetModel.FK_lik_like_evn_event">
+            <End Role="evn_event" EntitySet="evn_event" />
+            <End Role="lik_like" EntitySet="lik_like" />
+          </AssociationSet>
+          <EntitySet Name="blo_blob" EntityType="SocialNetModel.blo_blob" />
+          <FunctionImport Name="SP_FIND_FRIENDS" ReturnType="Collection(SocialNetModel.SP_FIND_FRIENDS_Result)">
+            <Parameter Name="searchstr" Mode="In" Type="String" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COUNT_FRIEND" ReturnType="Collection(SocialNetModel.SP_GET_COUNT_FRIEND_Result)">
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COUNT_GROUP" ReturnType="Collection(SocialNetModel.SP_GET_COUNT_GROUP_Result)">
+            <Parameter Name="entIdGroup" Mode="In" Type="Int64" />
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_FIND_GROUPS" ReturnType="Collection(SocialNetModel.SP_FIND_GROUPS_Result)">
+            <Parameter Name="searchstr" Mode="In" Type="String" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_ALERTS" ReturnType="Collection(SocialNetModel.SP_GET_ALERTS_Result)">
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_GROUPSFRIEND" ReturnType="Collection(SocialNetModel.SP_GET_GROUPSFRIEND_Result)">
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_BADGES" ReturnType="Collection(SocialNetModel.SP_GET_BADGES_Result)">
+          <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COUNT_COMPANY" ReturnType="Collection(Int32)">
+          <Parameter Name="entId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_FIND_COMPANIES" ReturnType="Collection(SocialNetModel.SP_FIND_COMPANIES_Result)">
+            <Parameter Name="searchstr" Mode="In" Type="String" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COMPANIES" ReturnType="Collection(SocialNetModel.SP_GET_COMPANIES_Result)">
+            <Parameter Name="entIdCompany" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COMMENTS" ReturnType="Collection(SocialNetModel.SP_GET_COMMENTS_Result)">
+            <Parameter Name="evnId" Mode="In" Type="Int64" />
+            <Parameter Name="evnIdTarget" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_GALLERIES" ReturnType="Collection(SocialNetModel.SP_GET_GALLERIES_Result)">
+            <Parameter Name="evnId" Mode="In" Type="Int64" />
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_POSTS" ReturnType="Collection(SocialNetModel.SP_GET_POSTS_Result)">
+            <Parameter Name="evnId" Mode="In" Type="Int64" />
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+            <Parameter Name="typeEvent" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_LIST_ENTITIES" ReturnType="Collection(SocialNetModel.SP_GET_LIST_ENTITIES_Result)">
+          <Parameter Name="entId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_PROFILE" ReturnType="Collection(SocialNetModel.SP_GET_PROFILE_Result)">
+          <Parameter Name="entId" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_COUNT_MEMBER" ReturnType="Collection(SocialNetModel.SP_GET_COUNT_MEMBER_Result)">
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_GROUPS" ReturnType="Collection(SocialNetModel.SP_GET_GROUPS_Result)">
+            <Parameter Name="entIdGroup" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+            <Parameter Name="accepted" Mode="In" Type="Boolean" />
+            <Parameter Name="rejected" Mode="In" Type="Boolean" />
+            <Parameter Name="suggested" Mode="In" Type="Boolean" />
+            <Parameter Name="typeAction" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_FRIENDS" ReturnType="Collection(SocialNetModel.SP_GET_FRIENDS_Result)">
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_MEMBERS" ReturnType="Collection(SocialNetModel.SP_GET_MEMBERS_Result)">
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_FOLLOWERS" ReturnType="Collection(SocialNetModel.SP_GET_FOLLOWERS_Result)">
+            <Parameter Name="entId" Mode="In" Type="Int64" />
+            <Parameter Name="entIdSession" Mode="In" Type="Int64" />
+            <Parameter Name="intLastId" Mode="In" Type="Int32" />
+            <Parameter Name="intPageSize" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="ale_alert">
+          <Key>
+            <PropertyRef Name="ale_id" />
+          </Key>
+          <Property Name="ale_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ent_id" Type="Int64" />
+          <Property Name="ale_send" Type="Boolean" />
+          <Property Name="ale_timestampSent" Type="DateTime" Precision="3" />
+          <Property Name="ale_idTarget" Type="Int64" />
+          <Property Name="ale_typeTarget" Type="Int32" />
+          <Property Name="ale_view" Type="Boolean" />
+          <Property Name="ale_timestampViewed" Type="DateTime" Precision="3" />
+          <Property Name="ale_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ale_enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ent_entity" Relationship="SocialNetModel.FK_ale_alert_ent_entity" FromRole="ale_alert" ToRole="ent_entity" />
+        </EntityType>
+        <EntityType Name="cou_country">
+          <Key>
+            <PropertyRef Name="cou_id" />
+          </Key>
+          <Property Name="cou_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="cou_countryCode" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="cou_countryName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="cou_currencyCode" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="cou_fipsCode" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="cou_isoNumeric" Type="String" MaxLength="4" FixedLength="true" Unicode="false" />
+          <Property Name="cou_north" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="cou_south" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="cou_east" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="cou_west" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="cou_capital" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="cou_continentName" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="cou_continent" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="cou_languages" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="cou_isoAlpha3" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="cou_geonameId" Type="Int32" />
+          <Property Name="cou_enabled" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="dic_dictionary">
+          <Key>
+            <PropertyRef Name="dic_id" />
+          </Key>
+          <Property Name="dic_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dic_table" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="dic_storeValue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dic_displayValue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dic_order" Type="Int32" />
+          <Property Name="dic_enabled" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ent_entity">
+          <Key>
+            <PropertyRef Name="ent_id" />
+          </Key>
+          <Property Name="ent_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ent_idTarget" Type="Int64" />
+          <Property Name="ent_email" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ent_password" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ent_firstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ent_lastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="evn_idProfile" Type="Int64" />
+          <Property Name="evn_idCover" Type="Int64" />
+          <Property Name="ent_gender" Type="Int32" />
+          <Property Name="ent_birthdate" Type="DateTime" Precision="3" />
+          <Property Name="ent_close" Type="Boolean" />
+          <Property Name="ent_active" Type="Boolean" />
+          <Property Name="cou_id" Type="Int64" />
+          <Property Name="lan_id" Type="Int64" />
+          <Property Name="ent_typeEntity" Type="Int32" />
+          <Property Name="ent_timeZone" Type="DateTimeOffset" Precision="7" />
+          <Property Name="ent_timestampModified" Type="DateTime" Precision="3" />
+          <Property Name="ent_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ent_enabled" Type="Boolean" Nullable="false" />
+          <Property Name="ent_hash" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ale_alert" Relationship="SocialNetModel.FK_ale_alert_ent_entity" FromRole="ent_entity" ToRole="ale_alert" />
+          <NavigationProperty Name="lan_language" Relationship="SocialNetModel.FK_ent_entity_lan_language" FromRole="ent_entity" ToRole="lan_language" />
+          <NavigationProperty Name="lik_like" Relationship="SocialNetModel.FK_lik_like_ent_entity" FromRole="ent_entity" ToRole="lik_like" />
+          <NavigationProperty Name="rel_relationship" Relationship="SocialNetModel.FK_rel_relationship_ent_entity" FromRole="ent_entity" ToRole="rel_relationship" />
+          <NavigationProperty Name="rel_relationship1" Relationship="SocialNetModel.FK_rel_relationship_ent_entity1" FromRole="ent_entity" ToRole="rel_relationship" />
+          <NavigationProperty Name="rel_relationship2" Relationship="SocialNetModel.FK_rel_relationship_ent_entity2" FromRole="ent_entity" ToRole="rel_relationship" />
+          <Property Name="ent_profileName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ent_profileCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ent_idFacebook" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ent_canPost" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="lan_language">
+          <Key>
+            <PropertyRef Name="lan_id" />
+          </Key>
+          <Property Name="lan_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="lan_description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="lan_locale" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="lan_languageCode" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="lan_lcid" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="lan_decimal" Type="Int32" />
+          <Property Name="lan_codePage" Type="Int32" />
+          <Property Name="blo_idIcon" Type="Int64" />
+          <Property Name="lan_enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ent_entity" Relationship="SocialNetModel.FK_ent_entity_lan_language" FromRole="lan_language" ToRole="ent_entity" />
+        </EntityType>
+        <EntityType Name="lik_like">
+          <Key>
+            <PropertyRef Name="lik_id" />
+          </Key>
+          <Property Name="lik_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ent_id" Type="Int64" />
+          <Property Name="evn_id" Type="Int64" />
+          <Property Name="lik_typeLike" Type="Int32" />
+          <Property Name="lik_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="lik_enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ent_entity" Relationship="SocialNetModel.FK_lik_like_ent_entity" FromRole="lik_like" ToRole="ent_entity" />
+          <NavigationProperty Name="evn_event" Relationship="SocialNetModel.FK_lik_like_evn_event" FromRole="lik_like" ToRole="evn_event" />
+        </EntityType>
+        <EntityType Name="rel_relationship">
+          <Key>
+            <PropertyRef Name="rel_id" />
+          </Key>
+          <Property Name="rel_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ent_idDo" Type="Int64" />
+          <Property Name="ent_idDd" Type="Int64" />
+          <Property Name="ent_idDr" Type="Int64" />
+          <Property Name="rel_timestampSuggested" Type="DateTime" Precision="3" />
+          <Property Name="rel_suggested" Type="Boolean" />
+          <Property Name="rel_timestampOffered" Type="DateTime" Precision="3" />
+          <Property Name="rel_offered" Type="Boolean" />
+          <Property Name="rel_timestampResponse" Type="DateTime" Precision="3" />
+          <Property Name="rel_accepted" Type="Boolean" />
+          <Property Name="rel_rejected" Type="Boolean" />
+          <Property Name="rel_blocked" Type="Boolean" />
+          <Property Name="rel_following" Type="Boolean" />
+          <Property Name="rel_timestampModified" Type="DateTime" Precision="3" />
+          <Property Name="rel_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="rel_enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ent_entity" Relationship="SocialNetModel.FK_rel_relationship_ent_entity" FromRole="rel_relationship" ToRole="ent_entity" />
+          <NavigationProperty Name="ent_entity1" Relationship="SocialNetModel.FK_rel_relationship_ent_entity1" FromRole="rel_relationship" ToRole="ent_entity" />
+          <NavigationProperty Name="ent_entity2" Relationship="SocialNetModel.FK_rel_relationship_ent_entity2" FromRole="rel_relationship" ToRole="ent_entity" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_ale_alert_ent_entity">
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="0..1" />
+          <End Type="SocialNetModel.ale_alert" Role="ale_alert" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="ale_alert">
+              <PropertyRef Name="ent_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ent_entity_lan_language">
+          <End Type="SocialNetModel.lan_language" Role="lan_language" Multiplicity="0..1" />
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="lan_language">
+              <PropertyRef Name="lan_id" />
+            </Principal>
+            <Dependent Role="ent_entity">
+              <PropertyRef Name="lan_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_lik_like_ent_entity">
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="0..1" />
+          <End Type="SocialNetModel.lik_like" Role="lik_like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="lik_like">
+              <PropertyRef Name="ent_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity">
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="0..1" />
+          <End Type="SocialNetModel.rel_relationship" Role="rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity1">
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="0..1" />
+          <End Type="SocialNetModel.rel_relationship" Role="rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDd" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_rel_relationship_ent_entity2">
+          <End Type="SocialNetModel.ent_entity" Role="ent_entity" Multiplicity="0..1" />
+          <End Type="SocialNetModel.rel_relationship" Role="rel_relationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ent_entity">
+              <PropertyRef Name="ent_id" />
+            </Principal>
+            <Dependent Role="rel_relationship">
+              <PropertyRef Name="ent_idDr" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="SP_MAIL_RESETPASS_Result">
+          <Property Type="String" Name="ent_firstName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ent_lastName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ent_email" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="ent_hash" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="evn_event">
+          <Key>
+            <PropertyRef Name="evn_id" />
+          </Key>
+          <Property Name="evn_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="evn_idTarget" Type="Int64" />
+          <Property Name="evn_system" Type="Boolean" />
+          <Property Name="ent_idDo" Type="Int64" />
+          <Property Name="ent_idDd" Type="Int64" />
+          <Property Name="evn_typeEvent" Type="Int32" />
+          <Property Name="evn_comment" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="blo_idMaterial" Type="Int64" />
+          <Property Name="evn_visibility" Type="Int32" />
+          <Property Name="evn_locationString" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="evn_locationCode" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="evn_latitude" Type="Decimal" Precision="10" Scale="6" />
+          <Property Name="evn_longitude" Type="Decimal" Precision="10" Scale="6" />
+          <Property Name="evn_externalType" Type="Int32" />
+          <Property Name="evn_externalLink" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="evn_timestampModified" Type="DateTime" Precision="3" />
+          <Property Name="evn_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="evn_enabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="lik_like" Relationship="SocialNetModel.FK_lik_like_evn_event" FromRole="evn_event" ToRole="lik_like" />
+        </EntityType>
+        <Association Name="FK_lik_like_evn_event">
+          <End Type="SocialNetModel.evn_event" Role="evn_event" Multiplicity="0..1" />
+          <End Type="SocialNetModel.lik_like" Role="lik_like" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="evn_event">
+              <PropertyRef Name="evn_id" />
+            </Principal>
+            <Dependent Role="lik_like">
+              <PropertyRef Name="evn_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="blo_blob">
+          <Key>
+            <PropertyRef Name="blo_id" />
+          </Key>
+          <Property Name="blo_id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="blo_guid" Type="Guid" />
+          <Property Name="blo_container" Type="Int32" />
+          <Property Name="blo_extension" Type="String" MaxLength="4" FixedLength="false" Unicode="true" />
+          <Property Name="blo_width" Type="Int32" />
+          <Property Name="blo_height" Type="Int32" />
+          <Property Name="blo_timestampCreated" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <ComplexType Name="SP_FIND_FRIENDS_Result">
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userName" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="String" Name="country" Nullable="true" MaxLength="45" />
+          <Property Type="Int32" Name="isFriend" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_COUNT_FRIEND_Result">
+          <Property Type="Int32" Name="countAll" Nullable="true" />
+          <Property Type="Int32" Name="countSend" Nullable="true" />
+          <Property Type="Int32" Name="countReceive" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_COUNT_GROUP_Result">
+          <Property Type="Int32" Name="countAll" Nullable="true" />
+          <Property Type="Int32" Name="countSend" Nullable="true" />
+          <Property Type="Int32" Name="countReceive" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_FIND_GROUPS_Result">
+          <Property Type="Int64" Name="groupId" Nullable="false" />
+          <Property Type="String" Name="groupName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="isJoin" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_ALERTS_Result">
+          <Property Type="Int64" Name="alertId" Nullable="false" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="alertDate" Nullable="true" />
+          <Property Type="Int32" Name="alertType" Nullable="true" />
+          <Property Type="Boolean" Name="alertView" Nullable="true" />
+          <Property Type="String" Name="param1" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="param2" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="param3" Nullable="true" MaxLength="101" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_GROUPSFRIEND_Result">
+          <Property Type="Int64" Name="groupId" Nullable="false" />
+          <Property Type="String" Name="groupName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="groupProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int64" Name="joinId" Nullable="true" />
+          <Property Type="Int32" Name="countMember" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_BADGES_Result">
+          <Property Type="Int32" Name="all" Nullable="true" />
+          <Property Type="Int32" Name="friend" Nullable="true" />
+          <Property Type="Int32" Name="group" Nullable="true" />
+          <Property Type="Int32" Name="member" Nullable="true" />
+          <Property Type="Int32" Name="follower" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_FIND_COMPANIES_Result">
+          <Property Type="Int64" Name="companyId" Nullable="false" />
+          <Property Type="String" Name="companyName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="isJoin" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_COMPANIES_Result">
+          <Property Type="Int64" Name="joinId" Nullable="false" />
+          <Property Type="Int64" Name="companyId" Nullable="false" />
+          <Property Type="String" Name="companyName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="companyProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Boolean" Name="rel_suggested" Nullable="true" />
+          <Property Type="Boolean" Name="rel_accepted" Nullable="true" />
+          <Property Type="Boolean" Name="rel_rejected" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+          <Property Type="String" Name="typeAction" Nullable="false" MaxLength="7" />
+          <Property Type="Int32" Name="countMember" Nullable="true" />
+          <Property Type="Int32" Name="isMe" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_COMMENTS_Result">
+          <Property Type="Int64" Name="postId" Nullable="false" />
+          <Property Type="String" Name="postText" Nullable="true" MaxLength="4000" />
+          <Property Type="Int32" Name="postCreated" Nullable="true" />
+          <Property Type="Int32" Name="visibility" Nullable="true" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userName" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="countLikes" Nullable="true" />
+          <Property Type="Boolean" Name="isLike" Nullable="true" />
+          <Property Type="Int32" Name="typeEntity" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_GALLERIES_Result">
+          <Property Type="Int64" Name="postId" Nullable="false" />
+          <Property Type="String" Name="postText" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="postGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="typeEvent" Nullable="true" />
+          <Property Type="Int32" Name="postCreated" Nullable="true" />
+          <Property Type="Int32" Name="visibility" Nullable="true" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="width" Nullable="true" />
+          <Property Type="Int32" Name="height" Nullable="true" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="Int32" Name="typeEntity" Nullable="true" />
+          <Property Type="String" Name="userNameO" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userNameD" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCodeO" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="userProfileCodeD" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="postExtType" Nullable="true" />
+          <Property Type="String" Name="postExtLink" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="countComments" Nullable="true" />
+          <Property Type="Int32" Name="countLikes" Nullable="true" />
+          <Property Type="Boolean" Name="isLike" Nullable="true" />
+          <Property Type="String" Name="lastComments" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="lastPhotos" Nullable="true" MaxLength="4000" />
+          <Property Type="Boolean" Name="isSystem" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_POSTS_Result">
+          <Property Type="Int64" Name="postId" Nullable="false" />
+          <Property Type="String" Name="postText" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="postGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="typeEvent" Nullable="true" />
+          <Property Type="Int32" Name="postCreated" Nullable="true" />
+          <Property Type="Int32" Name="visibility" Nullable="true" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="width" Nullable="true" />
+          <Property Type="Int32" Name="height" Nullable="true" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="Int32" Name="typeEntity" Nullable="true" />
+          <Property Type="String" Name="userNameO" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userNameD" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCodeO" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="userProfileCodeD" Nullable="true" MaxLength="20" />
+          <Property Type="Int32" Name="postExtType" Nullable="true" />
+          <Property Type="String" Name="postExtLink" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="countComments" Nullable="true" />
+          <Property Type="Int32" Name="countLikes" Nullable="true" />
+          <Property Type="Boolean" Name="isLike" Nullable="true" />
+          <Property Type="String" Name="lastComments" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="lastPhotos" Nullable="true" MaxLength="4000" />
+          <Property Type="Boolean" Name="isSystem" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_LIST_ENTITIES_Result">
+          <Property Type="Int64" Name="entityId" Nullable="false" />
+          <Property Type="String" Name="description" Nullable="true" MaxLength="101" />
+          <Property Type="Int32" Name="type" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_PROFILE_Result">
+          <Property Type="String" Name="ent_email" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="ent_firstName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ent_lastName" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="ent_gender" Nullable="true" />
+          <Property Type="DateTime" Name="ent_birthdate" Nullable="true" />
+          <Property Type="Int64" Name="lan_id" Nullable="true" />
+          <Property Type="Int64" Name="cou_id" Nullable="true" />
+          <Property Type="String" Name="cou_countryName" Nullable="true" MaxLength="45" />
+          <Property Type="String" Name="photoProfile" Nullable="true" MaxLength="41" />
+          <Property Type="String" Name="photoCover" Nullable="true" MaxLength="41" />
+          <Property Type="Int32" Name="ent_typeEntity" Nullable="true" />
+          <Property Type="Boolean" Name="ent_canPost" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_COUNT_MEMBER_Result">
+          <Property Type="Int32" Name="countAll" Nullable="true" />
+          <Property Type="Int32" Name="countSend" Nullable="true" />
+          <Property Type="Int32" Name="countReceive" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_GROUPS_Result">
+          <Property Type="Int64" Name="joinId" Nullable="false" />
+          <Property Type="Int64" Name="groupId" Nullable="false" />
+          <Property Type="String" Name="groupName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="groupProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Boolean" Name="rel_suggested" Nullable="true" />
+          <Property Type="Boolean" Name="rel_accepted" Nullable="true" />
+          <Property Type="Boolean" Name="rel_rejected" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+          <Property Type="String" Name="typeAction" Nullable="false" MaxLength="7" />
+          <Property Type="Int32" Name="countMember" Nullable="true" />
+          <Property Type="Int32" Name="isMe" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_FRIENDS_Result">
+          <Property Type="Int64" Name="friendId" Nullable="false" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userName" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Boolean" Name="rel_suggested" Nullable="true" />
+          <Property Type="Boolean" Name="rel_offered" Nullable="true" />
+          <Property Type="Boolean" Name="rel_accepted" Nullable="true" />
+          <Property Type="Boolean" Name="rel_rejected" Nullable="true" />
+          <Property Type="Boolean" Name="rel_blocked" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+          <Property Type="String" Name="typeAction" Nullable="false" MaxLength="7" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_MEMBERS_Result">
+          <Property Type="Int64" Name="memberId" Nullable="false" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userName" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Boolean" Name="rel_suggested" Nullable="true" />
+          <Property Type="Boolean" Name="rel_offered" Nullable="true" />
+          <Property Type="Boolean" Name="rel_accepted" Nullable="true" />
+          <Property Type="Boolean" Name="rel_rejected" Nullable="true" />
+          <Property Type="Boolean" Name="rel_blocked" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+          <Property Type="String" Name="typeAction" Nullable="false" MaxLength="7" />
+          <Property Type="Boolean" Name="isFriend" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_FOLLOWERS_Result">
+          <Property Type="Int64" Name="friendId" Nullable="false" />
+          <Property Type="Int64" Name="userId" Nullable="false" />
+          <Property Type="String" Name="userName" Nullable="true" MaxLength="101" />
+          <Property Type="String" Name="userProfileCode" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="profileGuid" Nullable="true" MaxLength="41" />
+          <Property Type="Boolean" Name="rel_suggested" Nullable="true" />
+          <Property Type="Boolean" Name="rel_offered" Nullable="true" />
+          <Property Type="Boolean" Name="rel_accepted" Nullable="true" />
+          <Property Type="Boolean" Name="rel_rejected" Nullable="true" />
+          <Property Type="Boolean" Name="rel_blocked" Nullable="true" />
+          <Property Type="Boolean" Name="rel_following" Nullable="true" />
+          <Property Type="String" Name="typeAction" Nullable="false" MaxLength="7" />
+          <Property Type="Boolean" Name="isFriend" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SocialNetModelStoreContainer" CdmEntityContainer="SocialNetEntities">
+          <EntitySetMapping Name="ale_alert">
+            <EntityTypeMapping TypeName="SocialNetModel.ale_alert">
+              <MappingFragment StoreEntitySet="ale_alert">
+                <ScalarProperty Name="ale_enabled" ColumnName="ale_enabled" />
+                <ScalarProperty Name="ale_timestampCreated" ColumnName="ale_timestampCreated" />
+                <ScalarProperty Name="ale_timestampViewed" ColumnName="ale_timestampViewed" />
+                <ScalarProperty Name="ale_view" ColumnName="ale_view" />
+                <ScalarProperty Name="ale_typeTarget" ColumnName="ale_typeTarget" />
+                <ScalarProperty Name="ale_idTarget" ColumnName="ale_idTarget" />
+                <ScalarProperty Name="ale_timestampSent" ColumnName="ale_timestampSent" />
+                <ScalarProperty Name="ale_send" ColumnName="ale_send" />
+                <ScalarProperty Name="ent_id" ColumnName="ent_id" />
+                <ScalarProperty Name="ale_id" ColumnName="ale_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="cou_country">
+            <EntityTypeMapping TypeName="SocialNetModel.cou_country">
+              <MappingFragment StoreEntitySet="cou_country">
+                <ScalarProperty Name="cou_enabled" ColumnName="cou_enabled" />
+                <ScalarProperty Name="cou_geonameId" ColumnName="cou_geonameId" />
+                <ScalarProperty Name="cou_isoAlpha3" ColumnName="cou_isoAlpha3" />
+                <ScalarProperty Name="cou_languages" ColumnName="cou_languages" />
+                <ScalarProperty Name="cou_continent" ColumnName="cou_continent" />
+                <ScalarProperty Name="cou_continentName" ColumnName="cou_continentName" />
+                <ScalarProperty Name="cou_capital" ColumnName="cou_capital" />
+                <ScalarProperty Name="cou_west" ColumnName="cou_west" />
+                <ScalarProperty Name="cou_east" ColumnName="cou_east" />
+                <ScalarProperty Name="cou_south" ColumnName="cou_south" />
+                <ScalarProperty Name="cou_north" ColumnName="cou_north" />
+                <ScalarProperty Name="cou_isoNumeric" ColumnName="cou_isoNumeric" />
+                <ScalarProperty Name="cou_fipsCode" ColumnName="cou_fipsCode" />
+                <ScalarProperty Name="cou_currencyCode" ColumnName="cou_currencyCode" />
+                <ScalarProperty Name="cou_countryName" ColumnName="cou_countryName" />
+                <ScalarProperty Name="cou_countryCode" ColumnName="cou_countryCode" />
+                <ScalarProperty Name="cou_id" ColumnName="cou_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="dic_dictionary">
+            <EntityTypeMapping TypeName="SocialNetModel.dic_dictionary">
+              <MappingFragment StoreEntitySet="dic_dictionary">
+                <ScalarProperty Name="dic_enabled" ColumnName="dic_enabled" />
+                <ScalarProperty Name="dic_order" ColumnName="dic_order" />
+                <ScalarProperty Name="dic_displayValue" ColumnName="dic_displayValue" />
+                <ScalarProperty Name="dic_storeValue" ColumnName="dic_storeValue" />
+                <ScalarProperty Name="dic_table" ColumnName="dic_table" />
+                <ScalarProperty Name="dic_id" ColumnName="dic_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ent_entity">
+            <EntityTypeMapping TypeName="SocialNetModel.ent_entity">
+              <MappingFragment StoreEntitySet="ent_entity">
+                <ScalarProperty Name="ent_canPost" ColumnName="ent_canPost" />
+                <ScalarProperty Name="ent_idFacebook" ColumnName="ent_idFacebook" />
+                <ScalarProperty Name="ent_profileCode" ColumnName="ent_profileCode" />
+                <ScalarProperty Name="ent_profileName" ColumnName="ent_profileName" />
+                <ScalarProperty Name="ent_hash" ColumnName="ent_hash" />
+                <ScalarProperty Name="ent_enabled" ColumnName="ent_enabled" />
+                <ScalarProperty Name="ent_timestampCreated" ColumnName="ent_timestampCreated" />
+                <ScalarProperty Name="ent_timestampModified" ColumnName="ent_timestampModified" />
+                <ScalarProperty Name="ent_timeZone" ColumnName="ent_timeZone" />
+                <ScalarProperty Name="ent_typeEntity" ColumnName="ent_typeEntity" />
+                <ScalarProperty Name="lan_id" ColumnName="lan_id" />
+                <ScalarProperty Name="cou_id" ColumnName="cou_id" />
+                <ScalarProperty Name="ent_active" ColumnName="ent_active" />
+                <ScalarProperty Name="ent_close" ColumnName="ent_close" />
+                <ScalarProperty Name="ent_birthdate" ColumnName="ent_birthdate" />
+                <ScalarProperty Name="ent_gender" ColumnName="ent_gender" />
+                <ScalarProperty Name="evn_idCover" ColumnName="evn_idCover" />
+                <ScalarProperty Name="evn_idProfile" ColumnName="evn_idProfile" />
+                <ScalarProperty Name="ent_lastName" ColumnName="ent_lastName" />
+                <ScalarProperty Name="ent_firstName" ColumnName="ent_firstName" />
+                <ScalarProperty Name="ent_password" ColumnName="ent_password" />
+                <ScalarProperty Name="ent_email" ColumnName="ent_email" />
+                <ScalarProperty Name="ent_idTarget" ColumnName="ent_idTarget" />
+                <ScalarProperty Name="ent_id" ColumnName="ent_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="lan_language">
+            <EntityTypeMapping TypeName="SocialNetModel.lan_language">
+              <MappingFragment StoreEntitySet="lan_language">
+                <ScalarProperty Name="lan_enabled" ColumnName="lan_enabled" />
+                <ScalarProperty Name="blo_idIcon" ColumnName="blo_idIcon" />
+                <ScalarProperty Name="lan_codePage" ColumnName="lan_codePage" />
+                <ScalarProperty Name="lan_decimal" ColumnName="lan_decimal" />
+                <ScalarProperty Name="lan_lcid" ColumnName="lan_lcid" />
+                <ScalarProperty Name="lan_languageCode" ColumnName="lan_languageCode" />
+                <ScalarProperty Name="lan_locale" ColumnName="lan_locale" />
+                <ScalarProperty Name="lan_description" ColumnName="lan_description" />
+                <ScalarProperty Name="lan_id" ColumnName="lan_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="lik_like">
+            <EntityTypeMapping TypeName="SocialNetModel.lik_like">
+              <MappingFragment StoreEntitySet="lik_like">
+                <ScalarProperty Name="lik_enabled" ColumnName="lik_enabled" />
+                <ScalarProperty Name="lik_timestampCreated" ColumnName="lik_timestampCreated" />
+                <ScalarProperty Name="lik_typeLike" ColumnName="lik_typeLike" />
+                <ScalarProperty Name="evn_id" ColumnName="evn_id" />
+                <ScalarProperty Name="ent_id" ColumnName="ent_id" />
+                <ScalarProperty Name="lik_id" ColumnName="lik_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="rel_relationship">
+            <EntityTypeMapping TypeName="SocialNetModel.rel_relationship">
+              <MappingFragment StoreEntitySet="rel_relationship">
+                <ScalarProperty Name="rel_enabled" ColumnName="rel_enabled" />
+                <ScalarProperty Name="rel_timestampCreated" ColumnName="rel_timestampCreated" />
+                <ScalarProperty Name="rel_timestampModified" ColumnName="rel_timestampModified" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="rel_blocked" ColumnName="rel_blocked" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_timestampResponse" ColumnName="rel_timestampResponse" />
+                <ScalarProperty Name="rel_offered" ColumnName="rel_offered" />
+                <ScalarProperty Name="rel_timestampOffered" ColumnName="rel_timestampOffered" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_timestampSuggested" ColumnName="rel_timestampSuggested" />
+                <ScalarProperty Name="ent_idDr" ColumnName="ent_idDr" />
+                <ScalarProperty Name="ent_idDd" ColumnName="ent_idDd" />
+                <ScalarProperty Name="ent_idDo" ColumnName="ent_idDo" />
+                <ScalarProperty Name="rel_id" ColumnName="rel_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="SocialNetModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_MAIL_RESETPASS" FunctionName="SocialNetModel.Store.SP_MAIL_RESETPASS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_MAIL_RESETPASS_Result">
+                <ScalarProperty Name="ent_firstName" ColumnName="ent_firstName" />
+                <ScalarProperty Name="ent_lastName" ColumnName="ent_lastName" />
+                <ScalarProperty Name="ent_email" ColumnName="ent_email" />
+                <ScalarProperty Name="ent_hash" ColumnName="ent_hash" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="evn_event">
+            <EntityTypeMapping TypeName="SocialNetModel.evn_event">
+              <MappingFragment StoreEntitySet="evn_event">
+                <ScalarProperty Name="evn_enabled" ColumnName="evn_enabled" />
+                <ScalarProperty Name="evn_timestampCreated" ColumnName="evn_timestampCreated" />
+                <ScalarProperty Name="evn_timestampModified" ColumnName="evn_timestampModified" />
+                <ScalarProperty Name="evn_externalLink" ColumnName="evn_externalLink" />
+                <ScalarProperty Name="evn_externalType" ColumnName="evn_externalType" />
+                <ScalarProperty Name="evn_longitude" ColumnName="evn_longitude" />
+                <ScalarProperty Name="evn_latitude" ColumnName="evn_latitude" />
+                <ScalarProperty Name="evn_locationCode" ColumnName="evn_locationCode" />
+                <ScalarProperty Name="evn_locationString" ColumnName="evn_locationString" />
+                <ScalarProperty Name="evn_visibility" ColumnName="evn_visibility" />
+                <ScalarProperty Name="blo_idMaterial" ColumnName="blo_idMaterial" />
+                <ScalarProperty Name="evn_comment" ColumnName="evn_comment" />
+                <ScalarProperty Name="evn_typeEvent" ColumnName="evn_typeEvent" />
+                <ScalarProperty Name="ent_idDd" ColumnName="ent_idDd" />
+                <ScalarProperty Name="ent_idDo" ColumnName="ent_idDo" />
+                <ScalarProperty Name="evn_system" ColumnName="evn_system" />
+                <ScalarProperty Name="evn_idTarget" ColumnName="evn_idTarget" />
+                <ScalarProperty Name="evn_id" ColumnName="evn_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="blo_blob">
+            <EntityTypeMapping TypeName="SocialNetModel.blo_blob">
+              <MappingFragment StoreEntitySet="blo_blob">
+                <ScalarProperty Name="blo_timestampCreated" ColumnName="blo_timestampCreated" />
+                <ScalarProperty Name="blo_height" ColumnName="blo_height" />
+                <ScalarProperty Name="blo_width" ColumnName="blo_width" />
+                <ScalarProperty Name="blo_extension" ColumnName="blo_extension" />
+                <ScalarProperty Name="blo_container" ColumnName="blo_container" />
+                <ScalarProperty Name="blo_guid" ColumnName="blo_guid" />
+                <ScalarProperty Name="blo_id" ColumnName="blo_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_FIND_FRIENDS" FunctionName="SocialNetModel.Store.SP_FIND_FRIENDS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_FIND_FRIENDS_Result">
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="country" ColumnName="country" />
+                <ScalarProperty Name="isFriend" ColumnName="isFriend" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COUNT_FRIEND" FunctionName="SocialNetModel.Store.SP_GET_COUNT_FRIEND">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_COUNT_FRIEND_Result">
+                <ScalarProperty Name="countAll" ColumnName="countAll" />
+                <ScalarProperty Name="countSend" ColumnName="countSend" />
+                <ScalarProperty Name="countReceive" ColumnName="countReceive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COUNT_GROUP" FunctionName="SocialNetModel.Store.SP_GET_COUNT_GROUP">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_COUNT_GROUP_Result">
+                <ScalarProperty Name="countAll" ColumnName="countAll" />
+                <ScalarProperty Name="countSend" ColumnName="countSend" />
+                <ScalarProperty Name="countReceive" ColumnName="countReceive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_FIND_GROUPS" FunctionName="SocialNetModel.Store.SP_FIND_GROUPS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_FIND_GROUPS_Result">
+                <ScalarProperty Name="groupId" ColumnName="groupId" />
+                <ScalarProperty Name="groupName" ColumnName="groupName" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="isJoin" ColumnName="isJoin" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_ALERTS" FunctionName="SocialNetModel.Store.SP_GET_ALERTS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_ALERTS_Result">
+                <ScalarProperty Name="alertId" ColumnName="alertId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="alertDate" ColumnName="alertDate" />
+                <ScalarProperty Name="alertType" ColumnName="alertType" />
+                <ScalarProperty Name="alertView" ColumnName="alertView" />
+                <ScalarProperty Name="param1" ColumnName="param1" />
+                <ScalarProperty Name="param2" ColumnName="param2" />
+                <ScalarProperty Name="param3" ColumnName="param3" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_GROUPSFRIEND" FunctionName="SocialNetModel.Store.SP_GET_GROUPSFRIEND">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_GROUPSFRIEND_Result">
+                <ScalarProperty Name="groupId" ColumnName="groupId" />
+                <ScalarProperty Name="groupName" ColumnName="groupName" />
+                <ScalarProperty Name="groupProfileCode" ColumnName="groupProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="joinId" ColumnName="joinId" />
+                <ScalarProperty Name="countMember" ColumnName="countMember" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_BADGES" FunctionName="SocialNetModel.Store.SP_GET_BADGES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_BADGES_Result">
+                <ScalarProperty Name="all" ColumnName="all" />
+                <ScalarProperty Name="friend" ColumnName="friend" />
+                <ScalarProperty Name="group" ColumnName="group" />
+                <ScalarProperty Name="member" ColumnName="member" />
+                <ScalarProperty Name="follower" ColumnName="follower" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COUNT_COMPANY" FunctionName="SocialNetModel.Store.SP_GET_COUNT_COMPANY" />
+          <FunctionImportMapping FunctionImportName="SP_FIND_COMPANIES" FunctionName="SocialNetModel.Store.SP_FIND_COMPANIES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_FIND_COMPANIES_Result">
+                <ScalarProperty Name="companyId" ColumnName="companyId" />
+                <ScalarProperty Name="companyName" ColumnName="companyName" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="isJoin" ColumnName="isJoin" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COMPANIES" FunctionName="SocialNetModel.Store.SP_GET_COMPANIES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_COMPANIES_Result">
+                <ScalarProperty Name="joinId" ColumnName="joinId" />
+                <ScalarProperty Name="companyId" ColumnName="companyId" />
+                <ScalarProperty Name="companyName" ColumnName="companyName" />
+                <ScalarProperty Name="companyProfileCode" ColumnName="companyProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="typeAction" ColumnName="typeAction" />
+                <ScalarProperty Name="countMember" ColumnName="countMember" />
+                <ScalarProperty Name="isMe" ColumnName="isMe" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COMMENTS" FunctionName="SocialNetModel.Store.SP_GET_COMMENTS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_COMMENTS_Result">
+                <ScalarProperty Name="postId" ColumnName="postId" />
+                <ScalarProperty Name="postText" ColumnName="postText" />
+                <ScalarProperty Name="postCreated" ColumnName="postCreated" />
+                <ScalarProperty Name="visibility" ColumnName="visibility" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="countLikes" ColumnName="countLikes" />
+                <ScalarProperty Name="isLike" ColumnName="isLike" />
+                <ScalarProperty Name="typeEntity" ColumnName="typeEntity" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_GALLERIES" FunctionName="SocialNetModel.Store.SP_GET_GALLERIES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_GALLERIES_Result">
+                <ScalarProperty Name="postId" ColumnName="postId" />
+                <ScalarProperty Name="postText" ColumnName="postText" />
+                <ScalarProperty Name="postGuid" ColumnName="postGuid" />
+                <ScalarProperty Name="typeEvent" ColumnName="typeEvent" />
+                <ScalarProperty Name="postCreated" ColumnName="postCreated" />
+                <ScalarProperty Name="visibility" ColumnName="visibility" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="width" ColumnName="width" />
+                <ScalarProperty Name="height" ColumnName="height" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="typeEntity" ColumnName="typeEntity" />
+                <ScalarProperty Name="userNameO" ColumnName="userNameO" />
+                <ScalarProperty Name="userNameD" ColumnName="userNameD" />
+                <ScalarProperty Name="userProfileCodeO" ColumnName="userProfileCodeO" />
+                <ScalarProperty Name="userProfileCodeD" ColumnName="userProfileCodeD" />
+                <ScalarProperty Name="postExtType" ColumnName="postExtType" />
+                <ScalarProperty Name="postExtLink" ColumnName="postExtLink" />
+                <ScalarProperty Name="countComments" ColumnName="countComments" />
+                <ScalarProperty Name="countLikes" ColumnName="countLikes" />
+                <ScalarProperty Name="isLike" ColumnName="isLike" />
+                <ScalarProperty Name="lastComments" ColumnName="lastComments" />
+                <ScalarProperty Name="lastPhotos" ColumnName="lastPhotos" />
+                <ScalarProperty Name="isSystem" ColumnName="isSystem" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_POSTS" FunctionName="SocialNetModel.Store.SP_GET_POSTS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_POSTS_Result">
+                <ScalarProperty Name="postId" ColumnName="postId" />
+                <ScalarProperty Name="postText" ColumnName="postText" />
+                <ScalarProperty Name="postGuid" ColumnName="postGuid" />
+                <ScalarProperty Name="typeEvent" ColumnName="typeEvent" />
+                <ScalarProperty Name="postCreated" ColumnName="postCreated" />
+                <ScalarProperty Name="visibility" ColumnName="visibility" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="width" ColumnName="width" />
+                <ScalarProperty Name="height" ColumnName="height" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="typeEntity" ColumnName="typeEntity" />
+                <ScalarProperty Name="userNameO" ColumnName="userNameO" />
+                <ScalarProperty Name="userNameD" ColumnName="userNameD" />
+                <ScalarProperty Name="userProfileCodeO" ColumnName="userProfileCodeO" />
+                <ScalarProperty Name="userProfileCodeD" ColumnName="userProfileCodeD" />
+                <ScalarProperty Name="postExtType" ColumnName="postExtType" />
+                <ScalarProperty Name="postExtLink" ColumnName="postExtLink" />
+                <ScalarProperty Name="countComments" ColumnName="countComments" />
+                <ScalarProperty Name="countLikes" ColumnName="countLikes" />
+                <ScalarProperty Name="isLike" ColumnName="isLike" />
+                <ScalarProperty Name="lastComments" ColumnName="lastComments" />
+                <ScalarProperty Name="lastPhotos" ColumnName="lastPhotos" />
+                <ScalarProperty Name="isSystem" ColumnName="isSystem" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_LIST_ENTITIES" FunctionName="SocialNetModel.Store.SP_GET_LIST_ENTITIES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_LIST_ENTITIES_Result">
+                <ScalarProperty Name="entityId" ColumnName="entityId" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="type" ColumnName="type" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_PROFILE" FunctionName="SocialNetModel.Store.SP_GET_PROFILE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_PROFILE_Result">
+                <ScalarProperty Name="ent_email" ColumnName="ent_email" />
+                <ScalarProperty Name="ent_firstName" ColumnName="ent_firstName" />
+                <ScalarProperty Name="ent_lastName" ColumnName="ent_lastName" />
+                <ScalarProperty Name="ent_gender" ColumnName="ent_gender" />
+                <ScalarProperty Name="ent_birthdate" ColumnName="ent_birthdate" />
+                <ScalarProperty Name="lan_id" ColumnName="lan_id" />
+                <ScalarProperty Name="cou_id" ColumnName="cou_id" />
+                <ScalarProperty Name="cou_countryName" ColumnName="cou_countryName" />
+                <ScalarProperty Name="photoProfile" ColumnName="photoProfile" />
+                <ScalarProperty Name="photoCover" ColumnName="photoCover" />
+                <ScalarProperty Name="ent_typeEntity" ColumnName="ent_typeEntity" />
+                <ScalarProperty Name="ent_canPost" ColumnName="ent_canPost" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_COUNT_MEMBER" FunctionName="SocialNetModel.Store.SP_GET_COUNT_MEMBER">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_COUNT_MEMBER_Result">
+                <ScalarProperty Name="countAll" ColumnName="countAll" />
+                <ScalarProperty Name="countSend" ColumnName="countSend" />
+                <ScalarProperty Name="countReceive" ColumnName="countReceive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_GROUPS" FunctionName="SocialNetModel.Store.SP_GET_GROUPS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_GROUPS_Result">
+                <ScalarProperty Name="joinId" ColumnName="joinId" />
+                <ScalarProperty Name="groupId" ColumnName="groupId" />
+                <ScalarProperty Name="groupName" ColumnName="groupName" />
+                <ScalarProperty Name="groupProfileCode" ColumnName="groupProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="typeAction" ColumnName="typeAction" />
+                <ScalarProperty Name="countMember" ColumnName="countMember" />
+                <ScalarProperty Name="isMe" ColumnName="isMe" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_FRIENDS" FunctionName="SocialNetModel.Store.SP_GET_FRIENDS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_FRIENDS_Result">
+                <ScalarProperty Name="friendId" ColumnName="friendId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_offered" ColumnName="rel_offered" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_blocked" ColumnName="rel_blocked" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="typeAction" ColumnName="typeAction" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_MEMBERS" FunctionName="SocialNetModel.Store.SP_GET_MEMBERS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_MEMBERS_Result">
+                <ScalarProperty Name="memberId" ColumnName="memberId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_offered" ColumnName="rel_offered" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_blocked" ColumnName="rel_blocked" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="typeAction" ColumnName="typeAction" />
+                <ScalarProperty Name="isFriend" ColumnName="isFriend" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_FOLLOWERS" FunctionName="SocialNetModel.Store.SP_GET_FOLLOWERS">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SocialNetModel.SP_GET_FOLLOWERS_Result">
+                <ScalarProperty Name="friendId" ColumnName="friendId" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="userProfileCode" ColumnName="userProfileCode" />
+                <ScalarProperty Name="profileGuid" ColumnName="profileGuid" />
+                <ScalarProperty Name="rel_suggested" ColumnName="rel_suggested" />
+                <ScalarProperty Name="rel_offered" ColumnName="rel_offered" />
+                <ScalarProperty Name="rel_accepted" ColumnName="rel_accepted" />
+                <ScalarProperty Name="rel_rejected" ColumnName="rel_rejected" />
+                <ScalarProperty Name="rel_blocked" ColumnName="rel_blocked" />
+                <ScalarProperty Name="rel_following" ColumnName="rel_following" />
+                <ScalarProperty Name="typeAction" ColumnName="typeAction" />
+                <ScalarProperty Name="isFriend" ColumnName="isFriend" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

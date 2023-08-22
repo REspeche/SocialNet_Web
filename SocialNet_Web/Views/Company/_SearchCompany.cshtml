@@ -1,0 +1,46 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+<dialog id="dialogCompanySearch" class="mdl-dialog dialogFull">
+    <div class="mdl-content">
+        <form name="frmCompanySearch" ng-submit="submitCompanySearch()" novalidate>
+            <div class="mdl-dialog__content">
+                <div angucomplete-alt id="txtFindCompany"
+                     placeholder="@Site.plaSearchCompany"
+                     pause="100"
+                     selected-object="itemRender"
+                     remote-url="/Company/FindCompany"
+                     remote-url-request-formatter="remoteUrlRequestFn"
+                     remote-url-data-field="items"
+                     title-field="companyName"
+                     description-field="description"
+                     minlength="2"
+                     input-class="mdl-textfield__input"
+                     match-class="highlight"
+                     text-searching="@Site.plaSearchingCompany"
+                     text-no-results="@Site.plaSearchNotFound">
+                </div>
+                <div id="previewSearch" ng-show="companySelected" class="card">
+                    <div class="card__author">
+                        <img ng-src="@(CommonHelper.getHandlerPath()){{companySelected.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{companySelected.companyName}}" title="{{companySelected.companyName}}">
+                        <div class="card__author-content">
+                            {{companySelected.companyName}}<i class="material-icons">{{companySelected.isJoin?"person":"record_voice_over"}}</i>
+                            <span class="card__author-des">{{companySelected.description}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-disabled="!companySelected" autofocus>
+                    @Site.btnJoinCompany
+                </button>
+                <button type="button" class="mdl-button mdl-js-button cancel">
+                    @Site.btnCancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+</dialog>
+

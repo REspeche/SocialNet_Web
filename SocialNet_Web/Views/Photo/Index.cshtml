@@ -1,0 +1,32 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Enum;
+@{
+    ViewBag.PageUser = Rules.pageUser.Photo;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/photo/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/photo/index")
+}
+<main class="mdl-layout__content">
+    @Html.Partial("_Cover")
+    <div ng-controller="wallCtrl" ng-init="loadInit()" whenscroll="showMore()">
+        <input type="hidden" id="varTypePage" value="@((int)Rules.pageUser.Photo)" />
+        <input type="hidden" id="lblPopupLoading" value="@Site.lblPopupLoading" />
+        <input type="hidden" id="lblPopupClose" value="@Site.lblPopupClose" />
+        <div masonry id="content" class="pagePhoto" masonry-options="{ columnwidth:400, gutter:30, transitionDuration:'0' }" load-images="false" preserve-order>
+            <div class="masonry-brick card" ng-repeat="item in posts" on-finish-render>
+                @Html.Partial("_Post")
+            </div>
+        </div>
+        @Html.Partial("_CreatePost")
+    </div>
+</main>
+@Html.Partial("_AddButton")

@@ -1,0 +1,148 @@
+﻿2016.10.29 - v.2.84
+- actualizacion de la version de material
+- animaciones de limpieza de pantalla
+
+2016.10.28 - v.2.83
+- Se agrego genero, fecha de cumpleaño y  pais a los datos que trae facebook.
+
+2016.10.24 - v.2.82
+- Correcciones varias
+
+2016.10.21 - v.2.81
+- Correcciones varias
+- Eliminar cuenta de usuario sin contraseña
+
+2016.10.12 - v.2.8
+- Safari compatibilidad
+
+2016.10.11 - v.2.7
+- Modificaciones varias sobre la funcionalidad
+
+2016.10.06 - v.2.6
+- Modificaciones varias sobre la funcionalidad
+
+2016.09.18 - v.2.5
+- Permitir eliminar una cuenta usuario/compañia
+- Correcciones varias
+
+2016.08.22 - v.2.45
+- Correcciones sobre la acción de siguiendo en Grupos
+- Imagen de perfil en alertas
+
+2016.08.22 - v.2.44
+- Correcciones sobre la acción de siguiendo en Grupos
+
+2016.08.22 - v.2.43
+- Correcciones varias
+
+2016.08.19 - v.2.42
+- Correcciones varias
+
+2016.08.15 - v.2.41
+- Correcciones varias
+
+2016.08.02 - v.2.4
+- Correcciones varias
+- Autologin con facebook
+- Links en las URL de los post
+
+2016.07.26 - v.2.3
+- Permitir restringir las publicaciones en el muro de una entidad
+
+2016.07.21 - v.2.2.1
+- Correcciones varias
+
+2016.07.20 - v.2.2
+- Login y Registro con Facebook
+
+2016.07.13 - v.2.1.3
+- Postear en una entidad siendo usuario (se anulo)
+
+2016.07.06 - v.2.1.2
+- Correcciones varias
+
+2016.07.04 - v.2.1.1
+- Correcciones varias
+
+2016.06.15 - v.2.1.0
+- Imagenes y Videos
+
+2016.06.10 - v.2.0.1
+- Correcciones varias sobre el módulo de grupo
+
+2016.06.09 - v.2.0
+- Registrar una entidad
+- Seguir una entidad
+- Ver los post de la entidad en tu muro
+
+2016.06.05 - v.1.7.5
+- Seguir un amigo o grupo
+- Ver las publicaciones de grupos seguidos en tu muro
+
+2016.06.04 - v.1.7.4
+- Modificaciones varias sobre el módulo de grupo
+
+2016.06.01 - v.1.7.3
+- Modificaciones varias sobre el módulo de grupo
+
+2016.05.26 - v.1.7.2
+- Modificaciones varias sobre el módulo de grupo
+
+2016.05.25 - v.1.7.1
+- Muro publico solo se ven post anonimos
+- Modificaciones varias sobre el módulo de grupo
+
+2016.05.18 - v.1.7
+- Crear grupo
+- Invitar amigo al grupo
+- Participar de un grupo
+- Publicar en un grupo
+- Modificar el perfil de un grupo
+
+2016.05.12 - v.1.6.1
+- Ver el perfil de otra persona (corrección)
+- Se cambiaron los parametros SMTP para envio de correos
+
+2016.05.12 - v.1.6
+- Ver el perfil de otra persona
+- Modificar el perfil propio
+- Cambiar la foto de perfil
+- Cambiar la foto de portada
+
+2016.05.06 - v.1.5
+- Listar amigos
+- Buscar amigos
+- Agregar amigo
+- Sugerir amigo en el muro de un amigo
+- Alertas (solo el listado de las mismas y tildarlas como vistas)
+- Contador de solicitudes pendientes a aprobar
+- Barra superior en el perfil de las personas (se agrego la base para perfil, foto, video y amigos)
+
+2016.04.21 - v.1.4
+- Ver videos a traves de la App YT del celular
+- Corrección repostear como anonimo despues de cerrar el posteador
+- Permite hacer like sobre las publicaciones y comentarios
+- Permite cargar un comentario
+- Eliminar comentario
+
+2016.04.18 - v.1.3
+- Crear post de tipo imagen
+- Crear post de tipo video
+- Vista previa de imagenes y videos haciendo click en la publicación
+- Se cambio el formato de la fecha de la publicación
+- Al cerrar sesión se va al muro publico si el usuario se encuentra en un muro ajeno
+
+2016.04.12 - v.1.2
+- Opción "Mi muro" y "Muro público" en el menú principal del usuario (izquierda)
+- Permite postear publicaciones de texto
+- Permite seleccionar la visibilidad como anonimato al postear
+- Navegar a través de los muros de los usuarios
+- Visualizar la foto de portada
+- Eliminar una publicación propia a través del menú de la misma
+
+2016.04.08 - v.1.1
+- Registrarse como persona en la red
+- Autentificarse en la red
+- Pedir reseteo de contraseña
+- Envío de mail para resetear la contraseña
+- Cerrar sesión de la persona

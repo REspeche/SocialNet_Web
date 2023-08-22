@@ -1,0 +1,32 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@{
+    ViewBag.PageUser = Rules.pageUser.Follower;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/friend/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/friend/index")
+}
+<main class="mdl-layout__content">
+    @Html.Partial("_Cover")
+    <div ng-controller="friendCtrl" ng-init="loadInit()">
+        <div id="content">
+            <div class="list">
+                <div ng-repeat="item in friends" on-finish-render
+                     class="card__friend mdl-card mdl-shadow--2dp"
+                     style="background:url('@(String.Concat(CommonHelper.getHandlerPath())){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))') center/cover">
+                    @Html.Partial("_Follower")
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

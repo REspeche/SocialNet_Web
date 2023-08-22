@@ -1,0 +1,50 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+<dialog id="dialogGroupSearch" class="mdl-dialog dialogFull">
+    <div class="mdl-content">
+        <form name="frmGroupSearch" ng-submit="submitGroupSearch()" novalidate>
+            <div class="mdl-dialog__content">
+                <div angucomplete-alt id="txtFindGroup"
+                     placeholder="@Site.plaSearchGroup"
+                     pause="100"
+                     selected-object="itemRender"
+                     remote-url="/Group/FindGroup"
+                     remote-url-request-formatter="remoteUrlRequestFn"
+                     remote-url-data-field="items"
+                     title-field="groupName"
+                     description-field="description"
+                     minlength="2"
+                     input-class="mdl-textfield__input"
+                     match-class="highlight"
+                     text-searching="@Site.plaSearchingGroup"
+                     text-no-results="@Site.plaSearchNotFound">
+                </div>
+                <div id="previewSearch" ng-show="groupSelected" class="card">
+                    <div class="card__author">
+                        <img ng-src="@(CommonHelper.getHandlerPath()){{groupSelected.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{groupSelected.groupName}}" title="{{groupSelected.groupName}}">
+                        <div class="card__author-content">
+                            {{groupSelected.groupName}}<i class="material-icons">{{groupSelected.isJoin?"person":"person_add"}}</i>
+                            <span class="card__author-des">{{groupSelected.description}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-disabled="!groupSelected" ng-if="session.userId==session.view_userId" autofocus>
+                    @Site.btnJoinGroup
+                </button>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-disabled="!groupSelected" ng-if="session.userId!=session.view_userId" autofocus>
+                    @Site.btnSuggestGroup
+                </button>
+                <button type="button" class="mdl-button mdl-js-button cancel">
+                    @Site.btnCancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+</dialog>
+

@@ -1,0 +1,63 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+<dialog id="dialogFriend" class="mdl-dialog dialogFull">
+    <div class="mdl-content">
+        <form name="frmFriend" ng-submit="submitFriend()" novalidate>
+            <div class="mdl-dialog__content">
+                <div angucomplete-alt id="txtFindFriend"
+                     placeholder="@Site.plaSearchPeople"
+                     pause="100"
+                     selected-object="itemRender"
+                     remote-url="/Friend/FindPerson"
+                     remote-url-request-formatter="remoteUrlRequestFn"
+                     remote-url-data-field="items"
+                     title-field="userName"
+                     description-field="description"
+                     minlength="2"
+                     input-class="mdl-textfield__input"
+                     match-class="highlight"
+                     text-searching="@Site.plaSearchingPeople"
+                     text-no-results="@Site.plaSearchNotFound">
+                </div>
+                <div id="previewSearch" ng-show="friendSelected" class="card">
+                    <div class="card__author">
+                        <img ng-src="@(CommonHelper.getHandlerPath()){{friendSelected.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{friendSelected.userName}}" title="{{friendSelected.userName}}">
+                        <div class="card__author-content">
+                            {{friendSelected.userName}}<i class="material-icons">{{friendSelected.isFriend?"person":"person_add"}}</i>
+                            <span class="card__author-des">{{friendSelected.description}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                @if (Session["view_typeEntity"].ToString().Equals("1"))
+                {
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                            ng-disabled="!friendSelected" ng-if="session.userId==session.view_userId" autofocus>
+                        @Site.btnAddFriend
+                    </button>
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                            ng-disabled="!friendSelected" ng-if="session.userId!=session.view_userId" autofocus>
+                        @Site.btnSuggestFriend
+                    </button>
+                }
+                @if (Session["view_typeEntity"].ToString().Equals("3"))
+                {
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                            ng-disabled="!friendSelected" ng-if="session.userId==session.view_userId" autofocus>
+                        @Site.btnAddGroup
+                    </button>
+                    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                            ng-disabled="!friendSelected" ng-if="session.userId!=session.view_userId" autofocus>
+                        @Site.btnSuggestGroup
+                    </button>
+                }
+                <button type="button" class="mdl-button mdl-js-button cancel">
+                    @Site.btnCancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+</dialog>

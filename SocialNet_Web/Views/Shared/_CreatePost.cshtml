@@ -1,0 +1,102 @@
+﻿@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+<dialog id="dialogPost" class="mdl-dialog dialogFull">
+    <div class="mdl-content">
+        <form name="frmPost" ng-submit="submitPost()" enctype="multipart/form-data" novalidate>
+            <div class="mdl-dialog__content">
+                <div class="mdl-grid cpost__header">
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <div class="card__author">
+                            <img ng-src="{{session.photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{session.userName}}" title="{{session.userName}}" ng-if="isLogin">
+                        </div>
+                        <div class="card__author">
+                            <img ng-src="{{session.view_photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{session.view_userName}}" title="{{session.view_userName}}" ng-if="isLogin && session.view_userId>0 && session.view_userId!=session.userId">
+                        </div>
+                        <div id="triangle-up"></div>
+                        <button type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" ng-class="{'mdl-button--colored':data.typeEvent == 1}" ng-click="changeTypeEvent(1)" ng-hide="indexEditPost>0" ng-disabled="typePage==2 || typePage==3">
+                            <i class="material-icons">create</i>
+                        </button>
+                        <button type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" ng-class="{'mdl-button--colored':data.typeEvent == 5}" ng-click="changeTypeEvent(5)" ng-hide="indexEditPost>0" ng-disabled="typePage==3">
+                            <i class="material-icons">insert_photo</i>
+                        </button>
+                        <button type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" ng-class="{'mdl-button--colored':data.typeEvent == 9}" ng-click="changeTypeEvent(9)" ng-hide="indexEditPost>0" ng-disabled="typePage==2">
+                            <i class="material-icons">ondemand_video</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mdl-grid cpost__content">
+                    <div class="mdl-cell mdl-cell--12-col">
+                        <fieldset>
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <textarea class="mdl-textfield__input" type="text" rows="3" id="txtPost" name="txtPost" value=""
+                                          ng-model="data.comment"></textarea>
+                                <label class="mdl-textfield__label" for="txtPost" ng-if="indexEditPost==0 && (session.view_userId==0 || session.view_userId==session.userId)">@Site.lblInputPost</label>
+                                <label class="mdl-textfield__label" for="txtPost" ng-if="indexEditPost==0 && session.view_userId>0 && session.view_userId!=session.userId">@String.Format(Site.lblInputPostOther, Session["view_userName"])</label>
+                                <label class="mdl-textfield__label" for="txtPost" ng-if="indexEditPost>0">@Site.lblInputPostEdit</label>
+                                <span class="mdl-textfield__error" ng-show="txtPostRequired">@Message.errorFieldRequired</span>
+                            </div>
+                            <div id="uploadImg" ng-show="data.typeEvent==5">
+                                <div ngf-drop ngf-select
+                                     ng-model="file"
+                                     class="drop-box" ngf-drag-over-class="'dragover'"
+                                     ngf-pattern="'image/*'"
+                                     ngf-accept="'image/*'"
+                                     ngf-max-size="5MB"
+                                     ngf-min-height="400"
+                                     ngf-resize="{width: 1920, height: 1080, quality: .9, type: 'image/jpeg', pattern:'.jpg'}"
+                                     ngf-resize-if="$width > 1920 || $height > 1080">
+                                    <span ng-show="!file">
+                                        <i class="material-icons _bg">photo_library</i>
+                                        <span class="_text">@((Request.Browser.IsMobileDevice) ? Site.lblClickPhoto : Site.lblDragPhoto)</span>
+                                    </span>
+                                </div>
+                                <div class="thumbnail"
+                                     ngf-thumbnail="file"
+                                     ngf-size="{height: 180, quality: .8}"
+                                     ngf-as-background="true">
+                                    <button type="button" ng-click="file=undefined"
+                                            class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored clearItem">
+                                        <i class="material-icons">clear</i>
+                                    </button>
+                                </div>
+                                <span class="mdl-textfield__error" ng-show="txtMediaRequired">@Message.errorFieldRequired</span>
+                            </div>
+                            <div id="uploadVid" ng-show="data.typeEvent==9">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="txtYoutube" name="txtYoutube"
+                                           ng-blur="verifyUrl($event)" ng-minlength="6" maxlength="300">
+                                    <label class="mdl-textfield__label" for="txtYoutube">@Site.lblInputLinkYoutube</label>
+                                    <span class="mdl-textfield__error" ng-show="txtMediaRequired">@Message.errorFieldRequired</span>
+                                </div>
+                                <div preview-youtube code="data.externalLink" ng-if="(data.externalLink)"></div>
+                            </div>
+                            <div ng-hide="indexEditPost>0">
+                                <i class="material-icons anonymous">security</i>
+                                <label for="chkAnonymous" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect lblAnonymous">
+                                    <input type="checkbox" id="chkAnonymous" class="mdl-checkbox__input"
+                                           ng-model="data.visibility" ng-true-value="7" ng-false-value="1">
+                                    <span class="mdl-checkbox__label">@Site.lblCheckAnonymous</span>
+                                </label>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-disabled="!frmPost.$valid" autofocus ng-if="indexEditPost==0">
+                    @Site.btnShare
+                </button>
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-disabled="!frmPost.$valid" autofocus ng-if="indexEditPost>0">
+                    @Site.btnFinishEdit
+                </button>
+                <button type="button" class="mdl-button mdl-js-button cancel">
+                    @Site.btnCancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+</dialog>

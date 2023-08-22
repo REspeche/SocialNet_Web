@@ -1,0 +1,28 @@
+﻿@using Web_Resource;
+<dialog id="dialogGroupAdd" class="mdl-dialog dialogFull">
+    <div class="mdl-content">
+        <form name="frmGroupAdd" ng-submit="submitGroupAdd()" novalidate>
+            <h4 class="mdl-dialog__title">@Site.titAddGroup</h4>
+            <div class="mdl-dialog__content">
+                <p>@Site.txtAddGroup</p>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" id="txtFirstName" name="txtFirstName" ng-model="dataAdd.name" ng-minlength="2" maxlength="50" data-required="true" untouch="frmGroupAdd.txtFirstName">
+                    <label class="mdl-textfield__label" for="txtFirstName">@Site.lblInputFirstName</label>
+                    <span class="mdl-textfield__error" ng-show="frmGroupAdd.txtFirstName.$touched && frmGroupAdd.txtFirstName.$error.required">@Message.errorFieldRequired</span>
+                    <span class="mdl-textfield__error" ng-show="frmGroupAdd.txtFirstName.$touched && frmGroupAdd.txtFirstName.$error.minlength">@String.Format(Message.errorNminlength, 2)</span>
+                </div>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                        ng-if="session.userId==session.view_userId" autofocus>
+                    @Site.btnCreateGroup
+                </button>
+                <button type="button" class="mdl-button mdl-js-button cancel">
+                    @Site.btnCancel
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && isDialogOpen"></div>
+</dialog>
+

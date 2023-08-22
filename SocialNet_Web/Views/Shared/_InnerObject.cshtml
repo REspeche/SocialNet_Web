@@ -1,0 +1,33 @@
+﻿@using Web_Resource;
+<div id="loader" class="mdl-progress mdl-js-progress mdl-progress__indeterminate" ng-show="isBusy && !isDialogOpen"></div>
+<dialog id="dialogMessage" class="mdl-dialog">
+    <h4 class="mdl-dialog__title">@Site.titMsgConfirm</h4>
+    <div class="mdl-dialog__content">
+        <p>@Site.txtMsgConfirm</p>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="mdl-button accept">@Site.btnAccept</button>
+        <button type="button" class="mdl-button cancel">@Site.btnCancel</button>
+    </div>
+</dialog>
+
+<div id="SessionVars">
+    <input type="hidden" id="userId" value="@Session["userId"]" />
+    <input type="hidden" id="userName" value="@Session["userName"]" />
+    <input type="hidden" id="userCode" value="@Session["userCode"]" />
+    <input type="hidden" id="photoProfile" value="@Session["photoProfile"]" />
+    <input type="hidden" id="photoCover" value="@Session["photoCover"]" />
+    <input type="hidden" id="typeEntity" value="@Session["typeEntity"]" />
+    <input type="hidden" id="locate" value="@Session["locale"]" />
+    <input type="hidden" id="view_userId" value="@Session["view_userId"]" />
+    <input type="hidden" id="view_userName" value="@Session["view_userName"]" />
+    <input type="hidden" id="view_userCode" value="@Session["view_userCode"]" />
+    <input type="hidden" id="view_photoProfile" value="@Session["view_photoProfile"]" />
+    <input type="hidden" id="view_photoCover" value="@Session["view_photoCover"]" />
+    <input type="hidden" id="view_typeEntity" value="@Session["view_typeEntity"]" />
+    <input type="hidden" id="view_targetId" value="@Session["view_targetId"]" />
+    <input type="hidden" id="view_isFriend" value="@Session["view_isFriend"]" />
+    <input type="hidden" id="view_isMember" value="@Session["view_isMember"]" />
+    <input type="hidden" id="view_isFollow" value="@Session["view_isFollow"]" />
+    <input type="hidden" id="view_canPost" value="@Session["view_canPost"]" />
+</div>

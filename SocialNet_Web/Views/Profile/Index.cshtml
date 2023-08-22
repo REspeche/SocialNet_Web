@@ -1,0 +1,298 @@
+﻿@using Web_BusinessLayer.Enum;
+@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@{
+    ViewBag.PageUser = Rules.pageUser.Profile;
+}
+@section header
+{
+    <title>@Web_Resource.Site.title</title>
+}
+@section style
+{
+    @Styles.Render("~/css/profile/index")
+}
+@section script
+{
+    @Scripts.Render("~/js/profile/index")
+}
+<main class="mdl-layout__content">
+    @Html.Partial("_Cover")
+    <div ng-controller="profileCtrl" ng-init="loadInit()">
+        <div id="content">
+            <div class="profile-card-square mdl-card mdl-shadow--2dp" ng-class="{editing: isEditProfile[0]}">
+                <div class="mdl-card__title" ng-show="session.view_typeEntity==1"><i class="material-icons">person</i><h2 class="mdl-card__title-text">@Site.titPersonalData</h2></div>
+                <div class="mdl-card__title" ng-show="session.view_typeEntity==2"><i class="material-icons">business</i><h2 class="mdl-card__title-text">@Site.titCompanyData</h2></div>
+                <div ng-hide="isEditProfile[0]">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-dialog__content">
+                            <div class="field_input">
+                                <label class="item__label">@Site.lblInputEmail</label>
+                                <label class="item__value">{{dataBD.email}}</label>
+                            </div>
+                            <div class="field_input">
+                                <label class="item__label">@Site.lblInputFirstName</label>
+                                <label class="item__value">{{dataBD.firstname}}</label>
+                            </div>
+                            <div class="field_input" ng-show="session.view_typeEntity==1">
+                                <label class="item__label">@Site.lblInputLastName</label>
+                                <label class="item__value">{{dataBD.lastname}}</label>
+                            </div>
+                            <div class="field_input" ng-show="session.view_typeEntity==1">
+                                <label class="item__label">@Site.lblInputGender</label>
+                                <label class="item__value">{{dataBD.genderLabel}}</label>
+                            </div>
+                            <div class="field_input" ng-show="session.view_typeEntity==1">
+                                <label class="item__label">@Site.lblInputBirth</label>
+                                <label class="item__value">{{dataBD.birthdateLabel}}</label>
+                            </div>
+                            <div class="field_input">
+                                <label class="item__label">@Site.lblInputCountry</label>
+                                <label class="item__value">{{dataBD.countryLabel}}</label>
+                            </div>
+                            <div class="field_input">
+                                <label class="item__label">@Site.lblInputLanguage</label>
+                                <label class="item__value">{{dataBD.languageLabel}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border" ng-if="session.userId==session.view_userId">
+                        <div class="mdl-dialog__actions">
+                            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" ng-click="editProfile(0)"
+                               ng-disabled="isEditProfile[1] || isEditProfile[2]">
+                                @Site.btnEditValues
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <form name="frmProfile_0" ng-submit="submitProfile(0)" novalidate
+                      ng-show="isEditProfile[0]">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-dialog__content">
+                            <fieldset>
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="email" id="txtEmail" name="txtEmail"
+                                           ng-value="dataProfile.email" ng-disabled="true">
+                                    <label class="mdl-textfield__label" for="txtEmail">@Site.lblInputEmail</label>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="text" id="txtFirstName" name="txtFirstName"
+                                           ng-model="dataProfile.firstname" ng-minlength="2" maxlength="50" data-required="true"
+                                           untouch="frmProfile_0.txtFirstName">
+                                    <label class="mdl-textfield__label" for="txtFirstName">@Site.lblInputFirstName</label>
+                                    <span class="mdl-textfield__error" ng-show="frmProfile_0.txtFirstName.$touched && frmProfile_0.txtFirstName.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmProfile_0.txtFirstName.$touched && frmProfile_0.txtFirstName.$error.minlength">@String.Format(Message.errorNminlength, 1)</span>
+                                </div>
+                            </fieldset>
+                            <fieldset ng-show="session.view_typeEntity==1">
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="text" id="txtLastName" name="txtLastName"
+                                           ng-model="dataProfile.lastname" ng-minlength="2" maxlength="50"
+                                           untouch="frmProfile_0.txtLastName">
+                                    <label class="mdl-textfield__label" for="txtLastName">@Site.lblInputLastName</label>
+                                    <span class="mdl-textfield__error" ng-show="frmProfile_0.txtLastName.$touched && frmProfile_0.txtLastName.$error.required">@Message.errorFieldRequired</span>
+                                    <span class="mdl-textfield__error" ng-show="frmProfile_0.txtLastName.$touched && frmProfile_0.txtLastName.$error.minlength">@String.Format(Message.errorNminlength, 1)</span>
+                                </div>
+                            </fieldset>
+                            <fieldset ng-show="session.view_typeEntity==1">
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <select id="selGender" name="selGender" class="mdl-textfield__input"
+                                            ng-value="dataProfile.gender">
+                                        <option ng-value="0" ng-selected="dataProfile.gender==0">@Value.valUndefined</option>
+                                        <option ng-value="1" ng-selected="dataProfile.gender==1">@Value.valMale</option>
+                                        <option ng-value="2" ng-selected="dataProfile.gender==2">@Value.valFemale</option>
+                                        <option ng-value="3" ng-selected="dataProfile.gender==3">@Value.valOther</option>
+                                    </select>
+                                    <label class="mdl-textfield__label" for="selGender">@Site.lblInputGender</label>
+                                </div>
+                            </fieldset>
+                            <fieldset ng-show="session.view_typeEntity==1">
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <adm-dtp id="txtBirthDate" naeme="txtBirthDate" ng-model="dataProfile.birthdate"></adm-dtp>
+                                    <label class="mdl-textfield__label label_date" for="txtBirthDate">@Site.lblInputBirth</label>
+                                    <span class="mdl-textfield__error" ng-show="frmProfile_0.txtBirthDate.$touched && frmProfile_0.txtBirthDate.$error.required">@Message.errorFieldRequired</span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <select id="selCountry" name="selCountry" class="mdl-textfield__input"
+                                            ng-value="dataProfile.country">
+                                        <option ng-repeat="item in countryList"
+                                                ng-value="{{item.id}}" ng-selected="item.id==dataProfile.country">
+                                            {{item.label}}
+                                        </option>
+                                    </select>
+                                    <label class="mdl-textfield__label" for="selCountry">@Site.lblInputCountry</label>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <select id="selLanguage" name="selLanguage" class="mdl-textfield__input"
+                                            ng-value="dataProfile.language">
+                                        <option ng-value="1" ng-selected="dataProfile.language==1">@Value.valSpanish</option>
+                                        <option ng-value="2" ng-selected="dataProfile.language==2">@Value.valEnglish</option>
+                                    </select>
+                                    <label class="mdl-textfield__label" for="selLanguage">@Site.lblInputLanguage</label>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div class="mdl-dialog__actions">
+                            <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                                @Site.btnSave
+                            </button>
+                            <button type="button" class="mdl-button mdl-js-button" ng-click="cancelProfile(0)">
+                                @Site.btnCancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="profile-card-square mdl-card mdl-shadow--2dp" ng-show="session.userId==session.view_userId">
+                <div class="mdl-card__title mdl-card--expand">
+                    <i class="material-icons">local_see</i><h2 class="mdl-card__title-text">@Site.titProfilePhoto</h2>
+                </div>
+                <div ng-hide="isEditProfile[1]">
+                    <div class="mdl-card__supporting-text imgProfile">
+                        <img class="img_profile" ng-src="{{dataBD.photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Photo))" ng-if="dataBD.photoProfile">
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div class="mdl-dialog__actions">
+                            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" ng-click="editProfile(1)"
+                               ng-disabled="isEditProfile[0] || isEditProfile[2]">
+                                @Site.btnChangePhoto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <form name="frmProfile_1" ng-submit="submitProfile(1)" novalidate
+                      ng-show="isEditProfile[1]">
+                    <div class="mdl-card__supporting-text imgProfile">
+                        <div id="uploadImg">
+                            <div ngf-drop ngf-select
+                                 ng-model="file"
+                                 class="drop-box" ngf-drag-over-class="'dragover'"
+                                 ngf-pattern="'image/*'"
+                                 ngf-accept="'image/*'"
+                                 ngf-max-size="5MB"
+                                 ngf-min-height="400"
+                                 ngf-resize="{width: 400, height: 400, centerCrop: true, quality: .9, type: 'image/jpeg', pattern:'.jpg'}"
+                                 ngf-resize-if="$width > 400 && $height > 400">
+                                <span ng-show="!file">
+                                    <i class="material-icons _bg">photo_library</i>
+                                    <span class="_text">@((Request.Browser.IsMobileDevice) ? Site.lblClickPhoto : Site.lblDragPhoto)</span>
+                                </span>
+                            </div>
+                            @Html.Partial("_ImageUpload")
+                        </div>
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div class="mdl-dialog__actions">
+                            <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                    ng-disabled="!file">
+                                @Site.btnSave
+                            </button>
+                            <button type="button" class="mdl-button mdl-js-button" ng-click="cancelProfile(1)">
+                                @Site.btnCancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="profile-card-square mdl-card mdl-shadow--2dp" ng-show="session.userId==session.view_userId">
+                <div class="mdl-card__title mdl-card--expand">
+                    <i class="material-icons">crop_original</i><h2 class="mdl-card__title-text">@Site.titCoverPhoto</h2>
+                </div>
+                <div ng-hide="isEditProfile[2]">
+                    <div class="mdl-card__supporting-text imgProfile">
+                        <img class="img_cover" ng-src="{{dataBD.photoCover}}@(CommonHelper.getImageWidth(Rules.imageSize.Cover))" ng-if="dataBD.photoCover" />
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div class="mdl-dialog__actions">
+                            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" ng-click="editProfile(2)"
+                               ng-disabled="isEditProfile[0] || isEditProfile[1]">
+                                @Site.btnChangePhoto
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <form name="frmProfile_2" ng-submit="submitProfile(2)" novalidate
+                      ng-show="isEditProfile[2]">
+                    <div class="mdl-card__supporting-text imgProfile">
+                        <div id="uploadImg">
+                            <div ngf-drop ngf-select
+                                 ng-model="file"
+                                 class="drop-box" ngf-drag-over-class="'dragover'"
+                                 ngf-pattern="'image/*'"
+                                 ngf-accept="'image/*'"
+                                 ngf-max-size="5MB"
+                                 ngf-min-height="430"
+                                 ngf-resize="{width: 1920, height: 1080, quality: .9, type: 'image/jpeg', pattern:'.jpg'}"
+                                 ngf-resize-if="$width > 1920 || $height > 1080">
+                                <span ng-show="!file">
+                                    <i class="material-icons _bg">photo_library</i>
+                                    <span class="_text">@((Request.Browser.IsMobileDevice) ? Site.lblClickPhoto : Site.lblDragPhoto)</span>
+                                </span>
+                            </div>
+                            @Html.Partial("_ImageUpload")
+                        </div>
+                    </div>
+                    <div class="mdl-card__actions mdl-card--border">
+                        <div class="mdl-dialog__actions">
+                            <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                    ng-disabled="!file">
+                                @Site.btnSave
+                            </button>
+                            <button type="button" class="mdl-button mdl-js-button" ng-click="cancelProfile(2)">
+                                @Site.btnCancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="profile-card-square mdl-card mdl-shadow--2dp" ng-show="session.view_typeEntity==2 && session.userId==session.view_userId">
+                <div class="mdl-card__title"><i class="material-icons">security</i><h2 class="mdl-card__title-text">@Site.titSecurity</h2></div>
+                <div ng-hide="isEditProfile[3]">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-dialog__content">
+                            <div class="field_input field_switch">
+                                <label class="item__label">@Site.lblCanPostWall</label>
+                                <label class="item__value">
+                                    <div class="material-switch pull-right">
+                                        <input id="chkCanPost" name="chkCanPost" type="checkbox" ng-checked="dataBD.canPost" ng-model="dataBD.canPost" ng-change="changeStateSwitch('canPost')"/>
+                                        <label for="chkCanPost" class="label-success"></label>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card-square mdl-card mdl-shadow--2dp panelAlert" ng-show="session.userId==session.view_userId">
+                <div class="mdl-card__title"><i class="material-icons">delete_forever</i><h2 class="mdl-card__title-text">@Site.titProfileRemove</h2></div>
+                <div>
+                    <form name="frmRemoveAccount" ng-submit="removeAccount()" novalidate>
+                        <div class="mdl-card__actions mdl-card--border">
+                            <div class="mdl-dialog__actions">
+                                <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                    @Site.btnRemoveAccount
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>

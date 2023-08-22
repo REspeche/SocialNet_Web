@@ -1,0 +1,504 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btnBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="btnCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btnContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="lblInputEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="lblInputFirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="lblInputLastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="lblInputPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="lblInputNewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="lblInputOldPassword" xml:space="preserve">
+    <value>Old password</value>
+  </data>
+  <data name="lblInputRepeatPassword" xml:space="preserve">
+    <value>Repeat password</value>
+  </data>
+  <data name="lnkRecoverPass" xml:space="preserve">
+    <value>Forget my password</value>
+  </data>
+  <data name="lnkSignup" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="titChangePass" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="title" xml:space="preserve">
+    <value>Wall</value>
+  </data>
+  <data name="titLogin1" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="titLogin2" xml:space="preserve">
+    <value>Signup</value>
+  </data>
+  <data name="titLogin3" xml:space="preserve">
+    <value>Recover password</value>
+  </data>
+  <data name="txtChangePass" xml:space="preserve">
+    <value>Write your old password and input the new password.</value>
+  </data>
+  <data name="txtLogin1" xml:space="preserve">
+    <value>Complete with your email and password to access the net.</value>
+  </data>
+  <data name="txtLogin2" xml:space="preserve">
+    <value>Complete all data to create a person account.</value>
+  </data>
+  <data name="txtLogin3" xml:space="preserve">
+    <value>Enter your email account to retrieve your password.</value>
+  </data>
+  <data name="txtChangePassSuccess" xml:space="preserve">
+    <value>La contraseña se cambio satisfactoriamente.</value>
+  </data>
+  <data name="lnkGoWall" xml:space="preserve">
+    <value>Go to wall</value>
+  </data>
+  <data name="txtChangePassExpired" xml:space="preserve">
+    <value>El tiempo para cambiar la contraseña expiro. Por favor, envíe nuevamente el mail para cambiar su contraseña.</value>
+  </data>
+  <data name="lnkChangePassSendMail" xml:space="preserve">
+    <value>Send mail again</value>
+  </data>
+  <data name="btnShare" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="mnuCloseSession" xml:space="preserve">
+    <value>Close session</value>
+  </data>
+  <data name="lblAnonymous" xml:space="preserve">
+    <value>Anonymous</value>
+  </data>
+  <data name="btnAccept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="lblEventUser1" xml:space="preserve">
+    <value>has changed his profile photo</value>
+  </data>
+  <data name="mnuEditPost" xml:space="preserve">
+    <value>Edit post</value>
+  </data>
+  <data name="mnuRemovePost" xml:space="preserve">
+    <value>Remove post</value>
+  </data>
+  <data name="lblEventUser2" xml:space="preserve">
+    <value>has changed his cover picture</value>
+  </data>
+  <data name="mnuHome" xml:space="preserve">
+    <value>Public wall</value>
+  </data>
+  <data name="lblEventUser3" xml:space="preserve">
+    <value>shared a video</value>
+  </data>
+  <data name="lblCheckAnonymous" xml:space="preserve">
+    <value>Share as anonymous</value>
+  </data>
+  <data name="lblDragPhoto" xml:space="preserve">
+    <value>Drag a picture here</value>
+  </data>
+  <data name="lblInputLinkYoutube" xml:space="preserve">
+    <value>Youtube URL</value>
+  </data>
+  <data name="lblInputPost" xml:space="preserve">
+    <value>Do you have a new notice for share?</value>
+  </data>
+  <data name="lblClickPhoto" xml:space="preserve">
+    <value>Click to add a picture</value>
+  </data>
+  <data name="lblPopupClose" xml:space="preserve">
+    <value>Close [Esc]</value>
+  </data>
+  <data name="lblPopupLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="btnFinishEdit" xml:space="preserve">
+    <value>Finish edit</value>
+  </data>
+  <data name="lblInputPostEdit" xml:space="preserve">
+    <value>Do you want to edit post?</value>
+  </data>
+  <data name="navFriends" xml:space="preserve">
+    <value>Friends</value>
+  </data>
+  <data name="navPhotos" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="navPosts" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="navVideos" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="titMsgConfirm" xml:space="preserve">
+    <value>Confirm action</value>
+  </data>
+  <data name="txtMsgConfirm" xml:space="preserve">
+    <value>Are you sure that want to confirm this action?</value>
+  </data>
+  <data name="mnuBlock" xml:space="preserve">
+    <value>Block</value>
+  </data>
+  <data name="mnuRemoveFriend" xml:space="preserve">
+    <value>Remove from my friends</value>
+  </data>
+  <data name="mnuUnBlock" xml:space="preserve">
+    <value>Unblock</value>
+  </data>
+  <data name="titFriend" xml:space="preserve">
+    <value>Friends of</value>
+  </data>
+  <data name="btnAddFriend" xml:space="preserve">
+    <value>Add friend</value>
+  </data>
+  <data name="plaSearchPeople" xml:space="preserve">
+    <value>Search people</value>
+  </data>
+  <data name="plaSearchingPeople" xml:space="preserve">
+    <value>Searching for people...</value>
+  </data>
+  <data name="plaSearchNotFound" xml:space="preserve">
+    <value>Not found records</value>
+  </data>
+  <data name="lblInputPostOther" xml:space="preserve">
+    <value>Do you have a notice for {0}?</value>
+  </data>
+  <data name="navProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="mnuAcceptFriend" xml:space="preserve">
+    <value>Aceptar amistad</value>
+  </data>
+  <data name="mnuRejectFriend" xml:space="preserve">
+    <value>Decline friendship</value>
+  </data>
+  <data name="mnuFollowFriend" xml:space="preserve">
+    <value>Receive notification</value>
+  </data>
+  <data name="mnuUnFollowFriend" xml:space="preserve">
+    <value>No receive notification</value>
+  </data>
+  <data name="mnuCancelRequest" xml:space="preserve">
+    <value>Cancel request</value>
+  </data>
+  <data name="btnSuggestFriend" xml:space="preserve">
+    <value>Suggest friend</value>
+  </data>
+  <data name="tabFriend1" xml:space="preserve">
+    <value>Everybody</value>
+  </data>
+  <data name="tabFriend2" xml:space="preserve">
+    <value>Applications sent</value>
+  </data>
+  <data name="tabFriend3" xml:space="preserve">
+    <value>Applications received</value>
+  </data>
+  <data name="btnChangePhoto" xml:space="preserve">
+    <value>Cambiar Foto</value>
+  </data>
+  <data name="btnEditValues" xml:space="preserve">
+    <value>Editar Valores</value>
+  </data>
+  <data name="btnSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="lblInputBirth" xml:space="preserve">
+    <value>Birth date</value>
+  </data>
+  <data name="lblInputCountry" xml:space="preserve">
+    <value>Origen country</value>
+  </data>
+  <data name="lblInputGender" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="lblInputLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="titCoverPhoto" xml:space="preserve">
+    <value>Cover Photo</value>
+  </data>
+  <data name="titPersonalData" xml:space="preserve">
+    <value>Personal data</value>
+  </data>
+  <data name="titProfilePhoto" xml:space="preserve">
+    <value>Profile photo</value>
+  </data>
+  <data name="btnAddGroup" xml:space="preserve">
+    <value>Add group</value>
+  </data>
+  <data name="btnSuggestGroup" xml:space="preserve">
+    <value>Suggest group</value>
+  </data>
+  <data name="mnuAcceptGroup" xml:space="preserve">
+    <value>Accept participation</value>
+  </data>
+  <data name="mnuFollowGroup" xml:space="preserve">
+    <value>View group activity</value>
+  </data>
+  <data name="mnuRejectGroup" xml:space="preserve">
+    <value>Decline invitation</value>
+  </data>
+  <data name="mnuRemoveGroup" xml:space="preserve">
+    <value>Delete from my groups</value>
+  </data>
+  <data name="mnuUnFollowGroup" xml:space="preserve">
+    <value>No receive notification</value>
+  </data>
+  <data name="navGroups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="plaSearchGroup" xml:space="preserve">
+    <value>Search group</value>
+  </data>
+  <data name="plaSearchingGroup" xml:space="preserve">
+    <value>Searching for group...</value>
+  </data>
+  <data name="tabGroup1" xml:space="preserve">
+    <value>Your groups</value>
+  </data>
+  <data name="tabGroup2" xml:space="preserve">
+    <value>Groups Suggested</value>
+  </data>
+  <data name="tabGroup3" xml:space="preserve">
+    <value>Friend's groups</value>
+  </data>
+  <data name="btnJoinGroup" xml:space="preserve">
+    <value>Join to group</value>
+  </data>
+  <data name="titAddGroup" xml:space="preserve">
+    <value>Add group</value>
+  </data>
+  <data name="txtAddGroup" xml:space="preserve">
+    <value>Complete all data to create a group.</value>
+  </data>
+  <data name="navMembers" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="lblCreateDate" xml:space="preserve">
+    <value>Date created</value>
+  </data>
+  <data name="lblGroupName" xml:space="preserve">
+    <value>Group name</value>
+  </data>
+  <data name="lblMember" xml:space="preserve">
+    <value>member</value>
+  </data>
+  <data name="tabMember1" xml:space="preserve">
+    <value>All members</value>
+  </data>
+  <data name="titGroupData" xml:space="preserve">
+    <value>Group data</value>
+  </data>
+  <data name="titGroupPhoto" xml:space="preserve">
+    <value>Group photo</value>
+  </data>
+  <data name="btnCreateGroup" xml:space="preserve">
+    <value>Create group</value>
+  </data>
+  <data name="mnuJoinRequest" xml:space="preserve">
+    <value>Give participation</value>
+  </data>
+  <data name="mnuUnLinkGroup" xml:space="preserve">
+    <value>Not participe</value>
+  </data>
+  <data name="txtLogin4" xml:space="preserve">
+    <value>Complete all data to create a company account.</value>
+  </data>
+  <data name="navFollowers" xml:space="preserve">
+    <value>Followers</value>
+  </data>
+  <data name="tabFollower1" xml:space="preserve">
+    <value>All followers</value>
+  </data>
+  <data name="mnuRemoveFollower" xml:space="preserve">
+    <value>Remove from my followers</value>
+  </data>
+  <data name="btnJoinCompany" xml:space="preserve">
+    <value>Follow organization</value>
+  </data>
+  <data name="mnuUnLinkCompany" xml:space="preserve">
+    <value>Not follow</value>
+  </data>
+  <data name="navCompanies" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="plaSearchCompany" xml:space="preserve">
+    <value>Search organizations</value>
+  </data>
+  <data name="plaSearchingCompany" xml:space="preserve">
+    <value>Searching organizations...</value>
+  </data>
+  <data name="lblFollower" xml:space="preserve">
+    <value>follower</value>
+  </data>
+  <data name="lblEventUser4" xml:space="preserve">
+    <value>has created this gallery</value>
+  </data>
+  <data name="tabCompany1" xml:space="preserve">
+    <value>Follow organization</value>
+  </data>
+  <data name="tabLogin1" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="tabLogin2" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="titCompanyData" xml:space="preserve">
+    <value>Company data</value>
+  </data>
+  <data name="mnuRemoveMember" xml:space="preserve">
+    <value>Remove member group</value>
+  </data>
+  <data name="lblCanPostWall" xml:space="preserve">
+    <value>The followers can to be post in own wall</value>
+  </data>
+  <data name="titSecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="btnRemoveAccount" xml:space="preserve">
+    <value>Remove this account</value>
+  </data>
+  <data name="btnRemoveGroup" xml:space="preserve">
+    <value>Remove this group</value>
+  </data>
+  <data name="lblRemoveAccount" xml:space="preserve">
+    <value>Write your password for can remove this account</value>
+  </data>
+  <data name="titGroupRemove" xml:space="preserve">
+    <value>Remove Group</value>
+  </data>
+  <data name="titProfileRemove" xml:space="preserve">
+    <value>Remove Account</value>
+  </data>
+</root>

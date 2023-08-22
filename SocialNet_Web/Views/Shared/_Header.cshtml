@@ -1,0 +1,50 @@
+﻿@using Web_Resource;
+@using Web_BusinessLayer.Helpers;
+@using Web_BusinessLayer.Enum;
+<header class="mdl-layout__header @if (!(bool)Session["isLogin"]) { @Html.Raw("header-not-login") }">
+    <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">
+            <img class="logo" src="~/Assets/img/logoWhite.png" />
+        </span>
+        <div class="mdl-layout-spacer"></div>
+        @Html.Partial("_Login")
+        <div id="panelUserDiv" ng-show="isLogin">
+            <div id="btnAlerts" class="main_badge cursorPointer" ng-click="getAlerts()">
+                <i class="material-icons">notifications</i>
+                <span class="mdl-badge" data-badge="{{allBadges()}}" ng-show="allBadges()>0"></span>
+            </div>
+            <div id="mnuUserLogin" class="card__author cursorPointer">
+                <img ng-src="{{session.photoProfile}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))" alt="{{session.userName}}" title="{{session.userName}}" ng-if="isLogin">
+            </div>
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                for="mnuUserLogin">
+                <li id="mnuItemMyProfile" class="mdl-menu__item mdl-menu__item--full-bleed-divider">@Site.navProfile</li>
+                <li id="mnuItemCloseSession" class="mdl-menu__item">@Site.mnuCloseSession</li>
+            </ul>
+        </div>
+    </div>
+</header>
+<div class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect mdl-shadow--2dp mnu_alerts" for="btnAlerts">
+    <div class="row" ng-repeat="item in alerts" ng-class="(!item.view?'viewed_alert':'')" ng-click="viewAlert($index)">
+        <div class="profile">
+            <img ng-src="@(CommonHelper.getHandlerPath()){{item.profileGuid}}@(CommonHelper.getImageWidth(Rules.imageSize.Profile))">
+        </div>
+        <div class="description">{{item.description}}<span class="card__author-date"><abbr data-time="{{item.date}}" class="post_show_date"></abbr></span></div>
+    </div>
+</div>
+<div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">
+        <img class="logo" src="~/Assets/img/logoBlue.png" />
+    </span>
+    <nav id="mnuMain" class="mdl-navigation">
+        <a class="mdl-navigation__link" href="/"><i class="material-icons">store</i>@Site.mnuHome</a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Profile" ng-show="isLogin"><i class="material-icons">portrait</i>@Site.navProfile</a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}" ng-show="isLogin"><i class="material-icons">view_module</i>@Site.navPosts</a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Photo" ng-show="isLogin"><i class="material-icons">perm_media</i>@Site.navPhotos</a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Video" ng-show="isLogin"><i class="material-icons">video_library</i>@Site.navVideos</a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Friend" ng-show="isLogin && session.typeEntity==1"><i class="material-icons">people</i>@Site.navFriends<span class="mdl-badge" data-badge="!" ng-if="badges.friend>0"></span></a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Friend/IndexCompany" ng-show="isLogin && session.typeEntity==2"><i class="material-icons">people</i>@Site.navFollowers<span class="mdl-badge" data-badge="!" ng-if="badges.follower>0"></span></a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Group" ng-show="isLogin && session.typeEntity==1"><i class="material-icons">toll</i>@Site.navGroups<span class="mdl-badge" data-badge="!" ng-if="badges.group>0"></span></a>
+        <a class="mdl-navigation__link" href="/{{session.userCode}}/Company" ng-show="isLogin && session.typeEntity==1"><i class="material-icons">business</i>@Site.navCompanies</a>
+    </nav>
+</div>

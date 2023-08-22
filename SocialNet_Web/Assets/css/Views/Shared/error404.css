@@ -1,0 +1,29 @@
+﻿.error-404 {
+    padding-top: 60px;
+}
+.error-404, .error-404 * {
+    text-align: center;
+}
+.error-404 h1 .fa {
+    color: #F64747;
+}
+.error-404 h1 {
+    font-size: 250px;
+    margin: 0;
+    line-height: 0;
+}
+.error-404 h1 small {
+    line-height: 0;
+    color: #999;
+}
+.error-404 h3 {
+    margin: 110px 0 0;
+    color: #999;
+}
+
+.error-404 .material-icons {
+    font-size: 215px;
+    line-height: 215px;
+    color: #87a8cf;
+    margin-bottom: 45px;
+}
